@@ -138,10 +138,11 @@ Batch No: ${result.batchNo}`;
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
           <Input
+            type="text"
             name="name"
+            placeholder="Enter product name"
             value={productData.name}
             onChange={handleInputChange}
-            placeholder="Enter product name"
             className="border-green-300 focus:border-green-500 focus:ring-green-500"
             required
           />
@@ -149,10 +150,11 @@ Batch No: ${result.batchNo}`;
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">Product Type</label>
           <Input
+            type="text"
             name="productType"
+            placeholder="Enter product type"
             value={productData.productType}
             onChange={handleInputChange}
-            placeholder="Enter product type"
             className="border-green-300 focus:border-green-500 focus:ring-green-500"
             required
           />
@@ -161,9 +163,9 @@ Batch No: ${result.batchNo}`;
           <label className="block text-sm font-medium text-gray-700 mb-2">Product Description</label>
           <Textarea
             name="description"
+            placeholder="Describe the product"
             value={productData.description}
             onChange={handleInputChange}
-            placeholder="Describe the product"
             className="border-green-300 focus:border-green-500 focus:ring-green-500"
             required
           />
@@ -173,12 +175,12 @@ Batch No: ${result.batchNo}`;
             <label className="block text-sm font-medium text-gray-700 mb-2">Batch Number</label>
             <div className="flex items-center space-x-2">
               <Input
-                type="number"
+                type="text"
                 name="batchNo"
+                placeholder="Enter batch number"
                 value={productData.batchNo}
                 onChange={handleInputChange}
-                placeholder="Enter batch number"
-                className="flex-grow border-green-300 focus:border-green-500 focus:ring-green-500"
+                className="w-full border border-green-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out"
                 required
               />
               <Button
@@ -195,26 +197,10 @@ Batch No: ${result.batchNo}`;
               </p>
             )}
             {batchError && (
-              <p className="text-sm text-red-600 mt-1">
-                {batchError}
-              </p>
+              <p className="text-red-500 text-sm mt-1">{batchError}</p>
             )}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
-            <Input
-              type="number"
-              name="price"
-              value={productData.price}
-              onChange={handleInputChange}
-              placeholder="Enter product price"
-              className="border-green-300 focus:border-green-500 focus:ring-green-500"
-              required
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
+          <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">Manufactured Date</label>
             <Input
               type="date"
@@ -225,20 +211,32 @@ Batch No: ${result.batchNo}`;
               required
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
-            <Input
-              type="date"
-              name="expiryDate"
-              value={productData.expiryDate}
-              onChange={handleInputChange}
-              className="border-green-300 focus:border-green-500 focus:ring-green-500"
-              required
-            />
-          </div>
         </div>
-        <Button 
-          type="submit" 
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+          <Input
+            type="date"
+            name="expiryDate"
+            value={productData.expiryDate}
+            onChange={handleInputChange}
+            className="border-green-300 focus:border-green-500 focus:ring-green-500"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
+          <Input
+            type="number"
+            name="price"
+            placeholder="Enter price"
+            value={productData.price}
+            onChange={handleInputChange}
+            className="border-green-300 focus:border-green-500 focus:ring-green-500"
+            required
+          />
+        </div>
+        <Button
+          type="submit"
           disabled={loading}
           className="w-full bg-green-600 hover:bg-green-700 text-white"
         >

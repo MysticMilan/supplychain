@@ -66,10 +66,11 @@ Name: ${result.name}`;
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">Batch Name</label>
           <Input
+            type="text"
             name="name"
+            placeholder="Enter batch name"
             value={batchData.name}
             onChange={handleInputChange}
-            placeholder="Enter batch name"
             className="border-green-300 focus:border-green-500 focus:ring-green-500"
             required
           />
@@ -78,9 +79,9 @@ Name: ${result.name}`;
           <label className="block text-sm font-medium text-gray-700 mb-2">Batch Description</label>
           <Textarea
             name="description"
+            placeholder="Describe the batch details"
             value={batchData.description}
             onChange={handleInputChange}
-            placeholder="Describe the batch details"
             className="border-green-300 focus:border-green-500 focus:ring-green-500"
             required
           />
@@ -95,7 +96,9 @@ Name: ${result.name}`;
       </form>
       {successMessage && (
         <DoneDialog
-          message={successMessage}
+          message={`Batch Created Successfully!
+
+${successMessage}`}
           onDone={() => setSuccessMessage(null)}
           autoHide={false} 
         />

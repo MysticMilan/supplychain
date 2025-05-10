@@ -80,6 +80,14 @@ export default function ManufacturerDashboard() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="flex w-full space-x-2 overflow-x-auto bg-green-100 p-1 rounded-lg">
+          <TabsTrigger
+            value="list"
+            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+          >Product List</TabsTrigger>
+          <TabsTrigger
+            value="product-checkin"
+            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+          >Product Check-In</TabsTrigger>
           <TabsTrigger 
             value="batch" 
             className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
@@ -89,18 +97,22 @@ export default function ManufacturerDashboard() {
             className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
           >Add Product</TabsTrigger>
           <TabsTrigger 
-            value="product-checkin" 
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Product Check-In</TabsTrigger>
-          <TabsTrigger 
-            value="list" 
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Product List</TabsTrigger>
-          <TabsTrigger 
             value="mark-as-lost" 
             className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
           >Mark as Lost</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="list">
+          <ProductList onError={(error: string) => handleError(error)} />
+        </TabsContent>
+
+        <TabsContent value="product-checkin">
+          <ProductCheckIn
+            onSuccess={() => handleSuccess("Product checked in successfully")}
+            onError={(error: string) => handleError(error)}
+            productStage={Stage.Manufactured}
+          />
+        </TabsContent>
 
         <TabsContent value="batch">
           <BatchCreation
@@ -122,18 +134,6 @@ export default function ManufacturerDashboard() {
             }
             onError={(error: string) => handleError(error)}
           />
-        </TabsContent>
-
-        <TabsContent value="product-checkin">
-          <ProductCheckIn
-            onSuccess={() => handleSuccess("Product checked in successfully")}
-            onError={(error: string) => handleError(error)}
-            productStage={Stage.Manufactured}
-          />
-        </TabsContent>
-
-        <TabsContent value="list">
-          <ProductList onError={(error: string) => handleError(error)} />
         </TabsContent>
 
         <TabsContent value="mark-as-lost">

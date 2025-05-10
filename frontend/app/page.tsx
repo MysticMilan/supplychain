@@ -39,19 +39,17 @@ export default function Home() {
 
         {/* Popup for Register User Form */}
         {isPopupOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
-            {/* Background */}
-            <div className="absolute inset-0 backdrop-blur-sm bg-black/20"></div>
-
-            {/* Popup Card */}
-            <div className="relative bg-white p-8 rounded-2xl shadow-2xl w-full max-w-3xl mx-auto text-center border border-green-200">
-              <button
-                onClick={togglePopup}
-                className="absolute top-4 right-4"
-              >
-                ✖
-              </button>
-              <RegisterUserForm />
+          <div className="fixed inset-0 z-50 backdrop-blur-sm bg-black/20 flex items-center justify-center p-4">
+            <div className="bg-white w-full max-w-4xl rounded-lg shadow-2xl">
+              <div className="relative p-8">
+                <button
+                  onClick={togglePopup}
+                  className="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
+                >
+                  ✖
+                </button>
+                <RegisterUserForm />
+              </div>
             </div>
           </div>
         )}
