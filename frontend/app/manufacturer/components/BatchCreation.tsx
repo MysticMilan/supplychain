@@ -31,16 +31,8 @@ export default function BatchCreation({ onSuccess, onError }: BatchCreationProps
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { name, description } = batchData;
-
-    // Validate inputs
-    if (!name.trim() || !description.trim()) {
-      onError('Please fill in batch name and description');
-      return;
-    }
-
     try {
-      const result = await createBatch(name, description);
+      const result = await createBatch(batchData.name, batchData.description);
       
       if (result) {
         onSuccess(result);

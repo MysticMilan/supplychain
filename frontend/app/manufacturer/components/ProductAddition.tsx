@@ -85,27 +85,6 @@ export default function ProductAddition({ onSuccess, onError }: ProductAdditionP
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { name, productType, description, batchNo } = productData;
-
-    // Validate inputs
-    if (!name.trim() || !productType.trim() || !description.trim()) {
-      onError('Please fill in all required fields');
-      return;
-    }
-
-    const batchNum = Number(batchNo);
-    if (isNaN(batchNum) || batchNum <= 0) {
-      onError('Invalid batch number');
-      return;
-    }
-
-    // Verify batch details before submission
-    const isValidBatch = await handleVerifyBatch();
-    if (!isValidBatch) {
-      onError('Please verify batch number');
-      return;
-    }
-
     try {
       const result = await addProduct(
         productData.name,
@@ -128,8 +107,13 @@ export default function ProductAddition({ onSuccess, onError }: ProductAdditionP
           batchNo: '',
           manufacturedDate: '',
           expiryDate: '',
-          price: ''
+          price: '',
         });
+
+        // Reset batch details and error
+        setBatchDetails(null);
+        setBatchError(null);
+
       } else if (productError) {
         onError(productError);
       }

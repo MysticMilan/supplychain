@@ -13,12 +13,12 @@ import ProductAddition from "./components/ProductAddition";
 import ProductList from "../shared/components/ProductList";
 import BatchCreation from "./components/BatchCreation";
 import ProductCheckIn from "../shared/components/ProductCheckIn";
-import MarkAsLost from "../shared/components/MarkAsLost";
+import ProductMarkAsLost from "../shared/components/ProductMarkAsLost";
 
 import { useAccountContractInfo } from "../hooks/domin/useAccountContractInfo";
 import { useMetamask } from "../hooks/blockchain/useMetamask";
 import Navbar from "@/components/Navbar";
-import { Role } from "../types/enums";
+import { Role, Stage } from "../types/enums";
 
 export default function ManufacturerDashboard() {
   const { userExists, userDetails } = useAccountContractInfo();
@@ -113,6 +113,7 @@ export default function ManufacturerDashboard() {
           <ProductCheckIn
             onSuccess={() => handleSuccess("Product checked in successfully")}
             onError={(error: string) => handleError(error)}
+            productStage={Stage.Manufactured}
           />
         </TabsContent>
 
@@ -121,7 +122,7 @@ export default function ManufacturerDashboard() {
         </TabsContent>
 
         <TabsContent value="mark-as-lost">
-          <MarkAsLost
+          <ProductMarkAsLost
             onSuccess={() =>
               handleSuccess("Product marked as lost successfully")
             }

@@ -10,9 +10,14 @@ import { Stage } from '@/app/types/enums';
 interface ProductCheckInProps {
   onSuccess: () => void;
   onError: (error: string) => void;
+  productStage: Stage;
 }
 
-const ProductCheckIn: React.FC<ProductCheckInProps> = ({ onSuccess, onError }) => {
+const ProductCheckIn: React.FC<ProductCheckInProps> = ({ 
+  onSuccess, 
+  onError, 
+  productStage 
+}) => {
   const [checkInData, setCheckInData] = useState({
     productId: '',
     remarks: ''
@@ -31,22 +36,12 @@ const ProductCheckIn: React.FC<ProductCheckInProps> = ({ onSuccess, onError }) =
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { productId, remarks } = checkInData;
-
-    // Validate inputs
-    const productIdNum = Number(productId);
-    if (isNaN(productIdNum) || productIdNum <= 0) {
-      onError('Invalid product ID');
-      return;
-    }
-
-    if (!remarks.trim()) {
-      onError('Remarks are required for product check-in');
-      return;
-    }
-
     try {
-      const result = await updateProductStage(productIdNum, Stage.Manufactured, remarks);
+      const result = await updateProductStage(
+        Number(checkInData.productId), 
+        productStage, 
+        checkInData.remarks
+      );
 
       if (result) {
         onSuccess();

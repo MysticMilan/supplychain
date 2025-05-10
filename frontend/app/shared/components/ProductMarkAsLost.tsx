@@ -5,15 +5,14 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
 import { useProductManagement } from '@/app/hooks/domin/useProductManagement';
-import { toast } from 'sonner';
 
-interface MarkAsLostProps {
+interface ProductMarkAsLostProps {
   onSuccess: () => void;
   onError: (error: string) => void;
 }
 
-const MarkAsLost: React.FC<MarkAsLostProps> = ({ onSuccess, onError }) => {
-  const [lostData, setLostData] = useState({
+const ProductMarkAsLost: React.FC<ProductMarkAsLostProps> = ({ onSuccess, onError }) => {
+  const [lostProductData, setLostProductData] = useState({
     productId: '',
     remarks: ''
   });
@@ -22,7 +21,7 @@ const MarkAsLost: React.FC<MarkAsLostProps> = ({ onSuccess, onError }) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setLostData(prev => ({
+    setLostProductData(prev => ({
       ...prev,
       [name]: value
     }));
@@ -31,29 +30,17 @@ const MarkAsLost: React.FC<MarkAsLostProps> = ({ onSuccess, onError }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { productId, remarks } = lostData;
-
-    // Validate inputs
-    const productIdNum = Number(productId);
-    if (isNaN(productIdNum) || productIdNum <= 0) {
-      onError('Invalid product ID');
-      return;
-    }
-
-    if (!remarks.trim()) {
-      onError('Remarks are required for marking product as lost');
-      return;
-    }
-
     try {
-      const result = await markAsLost(productIdNum, remarks);
+      const result = await markAsLost(
+        Number(lostProductData.productId), 
+        lostProductData.remarks
+      );
 
       if (result) {
-        toast.success('Product marked as lost successfully');
         onSuccess();
         
         // Reset form
-        setLostData({
+        setLostProductData({
           productId: '',
           remarks: ''
         });
@@ -61,9 +48,7 @@ const MarkAsLost: React.FC<MarkAsLostProps> = ({ onSuccess, onError }) => {
         onError(productError);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-      toast.error(errorMessage);
-      onError(errorMessage);
+      onError(err instanceof Error ? err.message : 'An unknown error occurred');
     }
   };
 
@@ -74,14 +59,14 @@ const MarkAsLost: React.FC<MarkAsLostProps> = ({ onSuccess, onError }) => {
           type="number"
           name="productId"
           placeholder="Enter product ID to mark as lost"
-          value={lostData.productId}
+          value={lostProductData.productId}
           onChange={handleInputChange}
           required
         />
         <Textarea
           name="remarks"
-          placeholder="Enter remarks for lost product"
-          value={lostData.remarks}
+          placeholder="Enter remarks for marking product as lost"
+          value={lostProductData.remarks}
           onChange={handleInputChange}
           required
         />
@@ -91,11 +76,11 @@ const MarkAsLost: React.FC<MarkAsLostProps> = ({ onSuccess, onError }) => {
           disabled={loading}
           className="w-full"
         >
-          {loading ? 'Marking as Lost...' : 'Mark as Lost'}
+          {loading ? 'Marking as Lost...' : 'Mark Product as Lost'}
         </Button>
       </form>
     </div>
   );
 };
 
-export default MarkAsLost;
+export default ProductMarkAsLost;
