@@ -74,7 +74,7 @@ export const useUserManagement = () => {
             setError("Failed to parse event log.");
           }
         }
-        setError("User added successfully!, but no event found in the logs.");
+        setError("UserAdded event not found in the logs.");
         return null;
       } catch (err: any) {
         console.log(err);
@@ -136,7 +136,7 @@ export const useUserManagement = () => {
           }
         }
         setError(
-          "User registered successfully!, but no event found in the logs."
+          "UserAdded event not found in the logs."
         );
         return null;
       } catch (err: any) {
@@ -200,9 +200,7 @@ export const useUserManagement = () => {
             setError("Failed to parse event log.");
           }
         }
-        setError(
-          "User status updated successfully!, but no event found in the logs."
-        );
+        setError("UserStatusUpdated event not found in the logs.");
         return null;
       } catch (err: any) {
         setError(

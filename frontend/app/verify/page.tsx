@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "@/components/Navbar";
 import { useProductManagement } from "../hooks/domin/useProductManagement";
 import { IBatch, IProduct, IStageDetails } from "../types/interface";
 import { Role , Stage } from "../types/enums";

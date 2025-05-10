@@ -311,7 +311,6 @@ contract SupplyChain {
 
         products[_productId].stage = Stage.Lost;
         productStage[_productId]++;
-        userProducts[msg.sender].push(_productId);
         userProductUpdate[msg.sender][_productId] = true;
         trackingProducts[_productId][
             productStage[_productId]
@@ -323,6 +322,9 @@ contract SupplyChain {
             Stage.Lost,
             _remark
         );
+        trackingProducts[_productId][productStage[_productId] - 1]
+            .exitTime = block.timestamp;
+               
         emit ProductStageUpdated(_productId, Stage.Lost, _remark);
     }
 

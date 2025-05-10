@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useMetamask } from "../hooks/blockchain/useMetamask";
+import { useMetamask } from "@/app/hooks/blockchain/useMetamask";
 import { useState, useEffect } from "react";
 import Link from "next/link"; // Import Link from Next.js
 

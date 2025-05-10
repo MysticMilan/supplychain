@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { IUser } from '../types/interface';
-import { Role, UserStatus } from '../types/enums';
-import { useUserManagement } from '../hooks/domin/useUserManagement';
-import ConfirmDialog from '../components/ConfirmDialog';
-import DoneDialog from '../components/DoneDialog';
+import { IUser } from '../../types/interface';
+import { Role, UserStatus } from '../../types/enums';
+import { useUserManagement } from '../../hooks/domin/useUserManagement';
+import ConfirmDialog from '@/components/ConfirmDialog';
+import DoneDialog from '@/components/DoneDialog';
 
 export default function UserList() {
     const { getAllUsers, updateUserStatus, error } = useUserManagement();

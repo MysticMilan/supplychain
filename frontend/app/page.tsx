@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import RegisterUserForm from "./admin/RegisterUserForm"; // Import the register user form
-import Navbar from "./components/Navbar";
+import RegisterUserForm from "./admin/components/RegisterUserForm"; // Import the register user form
+import Navbar from "@/components/Navbar";
 import Link from "next/link";
 
 export default function Home() {

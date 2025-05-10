@@ -1,10 +1,41 @@
 'use client';
 
-import Navbar from '../components/Navbar';
-import AddUserForm from './AddUserForm';
-import UserList from './UserList';
+import { ethers } from 'ethers';
+import Navbar from '@/components/Navbar';
+import AddUserForm from './components/AddUserForm';
+import UserList from './components/UserList';
+import { useMetamask }  from '@/app/hooks/blockchain/useMetamask';
+import { useAccountContractInfo } from '@/app/hooks/domin/useAccountContractInfo';
 
 export default function AdminDashboard() {
+
+    const { userAddress } = useMetamask();
+    const { owner } = useAccountContractInfo();
+
+      // If no user address, show connection prompt
+      if (!userAddress) {
+        return (
+          <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <p>
+                Please connect your wallet to access the Admin Dashboard.
+              </p>
+            </div>
+          </div>
+        );
+      }
+    
+      // If user is not Admin
+      if (userAddress && owner && ethers.getAddress(userAddress) !== ethers.getAddress(owner)) {
+        return (
+          <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <p>Only Admin can access this dashboard.</p>
+            </div>
+          </div>
+        );
+      }
+      
     return (
         <div className="min-h-screen bg-gray-50">
             <Navbar />
