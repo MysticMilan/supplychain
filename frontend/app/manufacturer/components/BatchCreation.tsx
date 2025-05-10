@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/Card';
+
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
 import { useBatchManagement } from '../../hooks/domin/useBatchManagement';
+import DoneDialog from '@/components/DoneDialog';
 
 interface BatchCreationProps {
   onSuccess: (batchDetails: { batchId: number; name: string }) => void;
@@ -17,6 +18,8 @@ export default function BatchCreation({ onSuccess, onError }: BatchCreationProps
     name: '',
     description: ''
   });
+
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const { createBatch, loading, error: batchError } = useBatchManagement();
 
@@ -35,6 +38,12 @@ export default function BatchCreation({ onSuccess, onError }: BatchCreationProps
       const result = await createBatch(batchData.name, batchData.description);
       
       if (result) {
+        const successMsg = `Batch Created Successfully!
+
+Batch ID: ${result.batchId}
+Name: ${result.name}`;
+        
+        setSuccessMessage(successMsg);
         onSuccess(result);
         
         // Reset form
@@ -51,32 +60,46 @@ export default function BatchCreation({ onSuccess, onError }: BatchCreationProps
   };
 
   return (
-    <Card title="Create New Batch">
+    <div className="bg-green-50 border border-green-200 rounded-lg p-6 shadow-md">
+      <h2 className="text-2xl font-bold text-green-800 mb-6">Create New Batch</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          name="name"
-          label="Batch Name"
-          value={batchData.name}
-          onChange={handleInputChange}
-          placeholder="Enter batch name"
-          required
-        />
-        <Textarea
-          name="description"
-          label="Batch Description"
-          value={batchData.description}
-          onChange={handleInputChange}
-          placeholder="Describe the batch details"
-          required
-        />
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Batch Name</label>
+          <Input
+            name="name"
+            value={batchData.name}
+            onChange={handleInputChange}
+            placeholder="Enter batch name"
+            className="border-green-300 focus:border-green-500 focus:ring-green-500"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Batch Description</label>
+          <Textarea
+            name="description"
+            value={batchData.description}
+            onChange={handleInputChange}
+            placeholder="Describe the batch details"
+            className="border-green-300 focus:border-green-500 focus:ring-green-500"
+            required
+          />
+        </div>
         <Button 
           type="submit" 
           disabled={loading}
-          className="w-full"
+          className="w-full bg-green-600 hover:bg-green-700 text-white"
         >
           {loading ? 'Creating Batch...' : 'Create Batch'}
         </Button>
       </form>
-    </Card>
+      {successMessage && (
+        <DoneDialog
+          message={successMessage}
+          onDone={() => setSuccessMessage(null)}
+          autoHide={false} 
+        />
+      )}
+    </div>
   );
 }

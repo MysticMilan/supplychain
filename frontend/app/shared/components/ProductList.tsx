@@ -46,18 +46,18 @@ const ProductList: React.FC<ProductListProps> = ({ onError }) => {
 
   const renderProductTable = () => {
     if (loading) {
-      return <p className="text-center text-gray-500">Loading products...</p>;
+      return <p className="text-center font-semibold">Loading products...</p>;
     }
 
     if (filteredProducts.length === 0) {
-      return <p className="text-center text-gray-500">No products found</p>;
+      return <p className="text-center font-semibold">No products found</p>;
     }
 
     return (
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-gray-100 border-b">
+            <tr className="bg-green-100 border-b border-green-200">
               <th className="p-2 text-left">S.N.</th>
               <th className="p-2 text-left">Name</th>
               <th className="p-2 text-left">Type</th>
@@ -70,7 +70,10 @@ const ProductList: React.FC<ProductListProps> = ({ onError }) => {
           </thead>
           <tbody>
             {filteredProducts.map((product, index) => (
-              <tr key={index} className="border-b hover:bg-gray-50">
+              <tr 
+                key={index} 
+                className="border-b border-green-100 hover:bg-green-50 transition-colors duration-200"
+              >
                 <td className="p-2">{index + 1}</td>
                 <td className="p-2">{product.name}</td>
                 <td className="p-2">{product.productType}</td>
@@ -92,27 +95,51 @@ const ProductList: React.FC<ProductListProps> = ({ onError }) => {
   };
 
   return (
-    <div className="space-y-4 p-4 bg-white rounded-lg shadow-md">
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Stage</label>
-        <Select 
-          value={filterStage.toString()} 
-          onValueChange={(value: string) => setFilterStage(value)}
+    <div className="space-y-4 p-4 bg-green-50 rounded-lg shadow-md border border-green-200">
+      <div className="flex justify-between items-center mb-4">
+        <div className="w-64">
+          <label className="block text-sm font-medium mb-1">Filter by Stage</label>
+          <Select 
+            value={filterStage.toString()} 
+            onValueChange={(value: string) => setFilterStage(value)}
+          >
+            <SelectTrigger className="border-green-300 focus:border-green-500">
+              <SelectValue placeholder="Select Stage" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="hover:bg-green-100">All Stages</SelectItem>
+              {Object.values(Stage)
+                .filter(stage => typeof stage === 'number')
+                .map((stage) => (
+                  <SelectItem 
+                    key={stage} 
+                    value={stage.toString()} 
+                    className="hover:bg-green-100"
+                  >
+                    {Stage[stage as Stage]}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <button 
+          onClick={() => {
+            setLoading(true);
+            getProductsByUser().then((userProducts) => {
+              if (userProducts) {
+                setProducts(userProducts);
+              }
+              setLoading(false);
+            }).catch((err) => {
+              onError(err instanceof Error ? err.message : 'Failed to fetch products');
+              setLoading(false);
+            });
+          }} 
+          disabled={loading}
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition disabled:opacity-50"
         >
-          <SelectTrigger>
-            <SelectValue placeholder="Select Stage" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Stages</SelectItem>
-            {Object.values(Stage)
-              .filter(stage => typeof stage === 'number')
-              .map((stage) => (
-                <SelectItem key={stage} value={stage.toString()}>
-                  {Stage[stage as Stage]}
-                </SelectItem>
-              ))}
-          </SelectContent>
-        </Select>
+          {loading ? 'Refreshing...' : 'Refresh'}
+        </button>
       </div>
 
       {/* Product Table */}

@@ -1,49 +1,68 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { IUser } from '../../types/interface';
 import { Role, UserStatus } from '../../types/enums';
 import { useUserManagement } from '../../hooks/domin/useUserManagement';
+import { toast } from 'sonner';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import DoneDialog from '@/components/DoneDialog';
 
-export default function UserList() {
-    const { getAllUsers, updateUserStatus, error } = useUserManagement();
+interface UserListProps {
+    onError?: (error: string | null) => void;
+}
+
+const UserList: React.FC<UserListProps> = ({ onError }) => {
+    const { getAllUsers, updateUserStatus } = useUserManagement();
     const [users, setUsers] = useState<IUser[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState(true);
+    const [selectedStatus, setSelectedStatus] = useState<UserStatus | 'ALL'>('ALL');
 
-    const [confirmAction, setConfirmAction] = useState<null | (() => void)>(null);
-    const [confirmMessage, setConfirmMessage] = useState<string>('');
-
-    const [doneMessage, setDoneMessage] = useState<string | null>(null);
+    const filteredUsers = useMemo(() => 
+        selectedStatus === 'ALL' 
+            ? users 
+            : users.filter(user => user.status === selectedStatus), 
+        [users, selectedStatus]
+    );
 
     const fetchUsers = useCallback(async () => {
-        setLoading(true);
         try {
-            const all = await getAllUsers();
-            setUsers(all);
-        } catch (err) {
-            console.error('Failed to fetch users', err);
-        } finally {
+            setLoading(true);
+            const fetchedUsers = await getAllUsers();
+            setUsers(fetchedUsers);
             setLoading(false);
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Failed to fetch users';
+            setLoading(false);
+            onError?.(errorMessage);
         }
-    }, [getAllUsers]);
+    }, [getAllUsers, onError]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         fetchUsers();
     }, [fetchUsers]);
 
-    const handleUpdateStatus = async (wallet: string, newStatus: UserStatus) => {
-        const result = await updateUserStatus(wallet, newStatus);
-        if (result) {
-            setDoneMessage(
-                `User ${result.wallet} updated from ${UserStatus[result.oldStatus]} to ${UserStatus[result.newStatus]}.`
-            );
-            fetchUsers();
-        }
-    };
+    const [confirmAction, setConfirmAction] = useState<null | (() => void)>(null);
+    const [confirmMessage, setConfirmMessage] = useState<string>('');
+    const [doneMessage, setDoneMessage] = useState<string | null>(null);
 
-    const confirmAndUpdateStatus = (wallet: string, newStatus: UserStatus) => {
+    const handleUpdateStatus = useCallback(async (wallet: string, newStatus: UserStatus) => {
+        try {
+            const result = await updateUserStatus(wallet, newStatus);
+            if (result) {
+                setDoneMessage(
+                    `User ${result.wallet} updated from ${UserStatus[result.oldStatus]} to ${UserStatus[result.newStatus]}.`
+                );
+                fetchUsers();
+            }
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Failed to update user status';
+            toast.error(errorMessage);
+        }
+    }, [updateUserStatus, fetchUsers]);
+
+    const confirmAndUpdateStatus = useCallback((wallet: string, newStatus: UserStatus) => {
         const warning = newStatus === UserStatus.Blocked
             ? "⚠️ Warning: You cannot unblock the user after blocking.\nAre you sure you want to block this user?"
             : `Are you sure you want to change user status to ${UserStatus[newStatus]}?`;
@@ -53,9 +72,9 @@ export default function UserList() {
             handleUpdateStatus(wallet, newStatus);
             setConfirmAction(null);
         });
-    };
+    }, [handleUpdateStatus]);
 
-    const renderActions = (status: UserStatus, wallet: string) => {
+    const renderActions = useCallback((status: UserStatus, wallet: string) => {
         if (status === UserStatus.Blocked) {
             return <span className="text-red-700 font-semibold text-sm">Blocked</span>;
         }
@@ -64,7 +83,7 @@ export default function UserList() {
             return <span className="text-orange-600 font-semibold text-sm">Rejected</span>;
         }
 
-        const actions = [
+        const actions: React.ReactNode[] = [
             <button
                 key="block"
                 onClick={() => confirmAndUpdateStatus(wallet, UserStatus.Blocked)}
@@ -118,59 +137,91 @@ export default function UserList() {
         }
 
         return <div className="flex flex-wrap gap-2">{actions}</div>;
+    }, [confirmAndUpdateStatus]);
+
+    const renderUserTable = () => {
+        if (loading) {
+            return <p className="text-center font-semibold">Loading users...</p>;
+        }
+
+        if (filteredUsers.length === 0) {
+            return <p className="text-center font-semibold">No users found</p>;
+        }
+
+        return (
+            <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                    <thead>
+                        <tr className="bg-green-100 border-b border-green-200">
+                            <th className="p-2 text-left">S.N.</th>
+                            <th className="p-2 text-left">Name</th>
+                            <th className="p-2 text-left">Role</th>
+                            <th className="p-2 text-left">Wallet</th>
+                            <th className="p-2 text-left">Status</th>
+                            <th className="p-2 text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredUsers.map((user, index) => (
+                            <tr 
+                                key={user.wallet} 
+                                className="border-b border-green-100 hover:bg-green-50 transition-colors duration-200"
+                            >
+                                <td className="p-2">{index + 1}</td>
+                                <td className="p-2">{user.name}</td>
+                                <td className="p-2">{Role[user.role]}</td>
+                                <td className="p-2 font-mono text-xs break-all">{user.wallet}</td>
+                                <td className="p-2">{UserStatus[user.status]}</td>
+                                <td className="p-2">{renderActions(user.status, user.wallet)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        );
     };
 
     return (
-        <div className="bg-white p-6 rounded shadow-md relative">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-green-800">Registered Users</h2>
-                <button
-                    onClick={fetchUsers}
+        <div className="space-y-4 p-4 bg-green-50 rounded-lg shadow-md border border-green-200">
+            <div className="flex justify-between items-center mb-4">
+                <div className="w-64">
+                    <label className="block text-sm font-medium mb-1">Filter by Status</label>
+                    <Select
+                        value={selectedStatus.toString()}
+                        onValueChange={(value: string) => setSelectedStatus(value === 'ALL' ? 'ALL' : Number(value))}
+                    >
+                        <SelectTrigger className="border-green-300 focus:border-green-500">
+                            <SelectValue placeholder="Select Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="ALL" className="hover:bg-green-100">All Statuses</SelectItem>
+                            {Object.values(UserStatus)
+                                .filter(status => typeof status === 'number')
+                                .map((status) => (
+                                    <SelectItem 
+                                        key={status} 
+                                        value={status.toString()} 
+                                        className="hover:bg-green-100"
+                                    >
+                                        {UserStatus[status as UserStatus]}
+                                    </SelectItem>
+                                ))
+                            }
+                        </SelectContent>
+                    </Select>
+                </div>
+                <button 
+                    onClick={fetchUsers} 
                     disabled={loading}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded text-sm"
+                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition disabled:opacity-50"
                 >
                     {loading ? 'Refreshing...' : 'Refresh'}
                 </button>
             </div>
 
-            {error && <p className="text-red-600 mb-2">{error}</p>}
-
-            <div className="overflow-x-auto">
-                <table className="w-full text-left border">
-                    <thead className="bg-gray-100 text-gray-700">
-                        <tr>
-                            <th className="p-2 border">SN</th>
-                            <th className="p-2 border">Name</th>
-                            <th className="p-2 border">Place</th>
-                            <th className="p-2 border">Wallet</th>
-                            <th className="p-2 border">Role</th>
-                            <th className="p-2 border">Status</th>
-                            <th className="p-2 border">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.length === 0 ? (
-                            <tr>
-                                <td colSpan={7} className="text-center p-4 text-gray-500">
-                                    {loading ? 'Loading users...' : 'No users found.'}
-                                </td>
-                            </tr>
-                        ) : (
-                            users.map((user, idx) => (
-                                <tr key={user.wallet} className="border-t hover:bg-gray-50">
-                                    <td className="p-2 border">{idx + 1}</td>
-                                    <td className="p-2 border">{user.name}</td>
-                                    <td className="p-2 border">{user.place}</td>
-                                    <td className="p-2 border font-mono text-xs break-all">{user.wallet}</td>
-                                    <td className="p-2 border">{Role[user.role]}</td>
-                                    <td className="p-2 border">{UserStatus[user.status]}</td>
-                                    <td className="p-2 border">{renderActions(user.status, user.wallet)}</td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+            {/* User Table */}
+            <div className="mt-4">
+                {renderUserTable()}
             </div>
 
             {confirmAction && (
@@ -190,3 +241,5 @@ export default function UserList() {
         </div>
     );
 }
+
+export default UserList;

@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/Card';
+
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
 import { useProductManagement } from '../../hooks/domin/useProductManagement';
 import { useBatchManagement } from '../../hooks/domin/useBatchManagement';
+import DoneDialog from '@/components/DoneDialog';
 
 interface ProductAdditionProps {
   onSuccess: (productDetails: { productId: number; name: string; batchNo: number }) => void;
@@ -26,6 +27,7 @@ export default function ProductAddition({ onSuccess, onError }: ProductAdditionP
 
   const [batchDetails, setBatchDetails] = useState<{ name: string } | null>(null);
   const [batchError, setBatchError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const { addProduct, loading, error: productError } = useProductManagement();
   const { getBatchDetails } = useBatchManagement();
@@ -97,6 +99,13 @@ export default function ProductAddition({ onSuccess, onError }: ProductAdditionP
       );
 
       if (result) {
+        const successMsg = `Product Added Successfully!
+
+Product ID: ${result.productId}
+Name: ${result.name}
+Batch No: ${result.batchNo}`;
+        
+        setSuccessMessage(successMsg);
         onSuccess(result);
         
         // Reset form
@@ -123,51 +132,59 @@ export default function ProductAddition({ onSuccess, onError }: ProductAdditionP
   };
 
   return (
-    <Card title="Add New Product">
+    <div className="bg-green-50 border border-green-200 rounded-lg p-6 shadow-md">
+      <h2 className="text-2xl font-bold text-green-800 mb-6">Add New Product</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          name="name"
-          label="Product Name"
-          value={productData.name}
-          onChange={handleInputChange}
-          placeholder="Enter product name"
-          required
-        />
-        <Input
-          name="productType"
-          label="Product Type"
-          value={productData.productType}
-          onChange={handleInputChange}
-          placeholder="Enter product type"
-          required
-        />
-        <Textarea
-          name="description"
-          label="Product Description"
-          value={productData.description}
-          onChange={handleInputChange}
-          placeholder="Describe the product"
-          required
-        />
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
+          <Input
+            name="name"
+            value={productData.name}
+            onChange={handleInputChange}
+            placeholder="Enter product name"
+            className="border-green-300 focus:border-green-500 focus:ring-green-500"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Product Type</label>
+          <Input
+            name="productType"
+            value={productData.productType}
+            onChange={handleInputChange}
+            placeholder="Enter product type"
+            className="border-green-300 focus:border-green-500 focus:ring-green-500"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Product Description</label>
+          <Textarea
+            name="description"
+            value={productData.description}
+            onChange={handleInputChange}
+            placeholder="Describe the product"
+            className="border-green-300 focus:border-green-500 focus:ring-green-500"
+            required
+          />
+        </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="flex items-end space-x-2">
-              <div className="flex-grow">
-                <Input
-                  type="number"
-                  name="batchNo"
-                  label="Batch Number"
-                  value={productData.batchNo}
-                  onChange={handleInputChange}
-                  placeholder="Enter batch number"
-                  required
-                />
-              </div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Batch Number</label>
+            <div className="flex items-center space-x-2">
+              <Input
+                type="number"
+                name="batchNo"
+                value={productData.batchNo}
+                onChange={handleInputChange}
+                placeholder="Enter batch number"
+                className="flex-grow border-green-300 focus:border-green-500 focus:ring-green-500"
+                required
+              />
               <Button
                 type="button"
                 onClick={handleVerifyBatch}
-                className="mb-1"
-                variant="secondary"
+                className="bg-green-600 hover:bg-green-700 text-white"
               >
                 Verify
               </Button>
@@ -183,42 +200,58 @@ export default function ProductAddition({ onSuccess, onError }: ProductAdditionP
               </p>
             )}
           </div>
-          <Input
-            type="number"
-            name="price"
-            label="Price"
-            value={productData.price}
-            onChange={handleInputChange}
-            placeholder="Enter product price"
-            required
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
+            <Input
+              type="number"
+              name="price"
+              value={productData.price}
+              onChange={handleInputChange}
+              placeholder="Enter product price"
+              className="border-green-300 focus:border-green-500 focus:ring-green-500"
+              required
+            />
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Input
-            type="date"
-            name="manufacturedDate"
-            label="Manufactured Date"
-            value={productData.manufacturedDate}
-            onChange={handleInputChange}
-            required
-          />
-          <Input
-            type="date"
-            name="expiryDate"
-            label="Expiry Date"
-            value={productData.expiryDate}
-            onChange={handleInputChange}
-            required
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Manufactured Date</label>
+            <Input
+              type="date"
+              name="manufacturedDate"
+              value={productData.manufacturedDate}
+              onChange={handleInputChange}
+              className="border-green-300 focus:border-green-500 focus:ring-green-500"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+            <Input
+              type="date"
+              name="expiryDate"
+              value={productData.expiryDate}
+              onChange={handleInputChange}
+              className="border-green-300 focus:border-green-500 focus:ring-green-500"
+              required
+            />
+          </div>
         </div>
         <Button 
           type="submit" 
           disabled={loading}
-          className="w-full"
+          className="w-full bg-green-600 hover:bg-green-700 text-white"
         >
           {loading ? 'Adding Product...' : 'Add Product'}
         </Button>
       </form>
-    </Card>
+      {successMessage && (
+        <DoneDialog
+          message={successMessage}
+          onDone={() => setSuccessMessage(null)}
+          autoHide={false}
+        />
+      )}
+    </div>
   );
 }

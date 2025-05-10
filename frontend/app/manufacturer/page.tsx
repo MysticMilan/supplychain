@@ -36,9 +36,9 @@ export default function ManufacturerDashboard() {
   // If no user address, show connection prompt
   if (!userAddress) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <p>
+      <div className="flex items-center justify-center min-h-screen bg-green-50">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-green-200">
+          <p className="text-green-800 text-center">
             Please connect your wallet to access the Manufacturer Dashboard.
           </p>
         </div>
@@ -49,9 +49,9 @@ export default function ManufacturerDashboard() {
   // If user is not registered
   if (!userExists) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <p>
+      <div className="flex items-center justify-center min-h-screen bg-green-50">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-green-200">
+          <p className="text-green-800 text-center">
             Your wallet is not registered in the system. Please complete
             registration.
           </p>
@@ -63,28 +63,43 @@ export default function ManufacturerDashboard() {
   // If user is not Manufacturer
   if (userDetails?.role !== Role.Manufacturer) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <p>Only Manufacturer can access this dashboard.</p>
+      <div className="flex items-center justify-center min-h-screen bg-green-50">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-green-200">
+          <p className="text-green-800 text-center">Only Manufacturer can access this dashboard.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6 bg-white min-h-screen">
       <Navbar />
 
       <Toaster />
-      <h1 className="text-3xl font-bold mb-6">Manufacturer Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-6 text-green-800">Manufacturer Dashboard</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="flex w-full space-x-2 overflow-x-auto">
-          <TabsTrigger value="batch">Create Batch</TabsTrigger>
-          <TabsTrigger value="product-add">Add Product</TabsTrigger>
-          <TabsTrigger value="product-checkin">Product Check-In</TabsTrigger>
-          <TabsTrigger value="list">Product List</TabsTrigger>
-          <TabsTrigger value="mark-as-lost">Mark as Lost</TabsTrigger>
+        <TabsList className="flex w-full space-x-2 overflow-x-auto bg-green-100 p-1 rounded-lg">
+          <TabsTrigger 
+            value="batch" 
+            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+          >Create Batch</TabsTrigger>
+          <TabsTrigger 
+            value="product-add" 
+            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+          >Add Product</TabsTrigger>
+          <TabsTrigger 
+            value="product-checkin" 
+            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+          >Product Check-In</TabsTrigger>
+          <TabsTrigger 
+            value="list" 
+            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+          >Product List</TabsTrigger>
+          <TabsTrigger 
+            value="mark-as-lost" 
+            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+          >Mark as Lost</TabsTrigger>
         </TabsList>
 
         <TabsContent value="batch">
