@@ -180,7 +180,7 @@ Batch No: ${result.batchNo}`;
                 placeholder="Enter batch number"
                 value={productData.batchNo}
                 onChange={handleInputChange}
-                className="w-full border border-green-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out"
+                className="border-green-300 focus:border-green-500 focus:ring-green-500"
                 required
               />
               <Button
@@ -208,7 +208,7 @@ Batch No: ${result.batchNo}`;
               placeholder="Enter price"
               value={productData.price}
               onChange={handleInputChange}
-              className="w-full border border-green-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out"
+              className="border-green-300 focus:border-green-500 focus:ring-green-500"
               required
             />
           </div>
@@ -221,7 +221,7 @@ Batch No: ${result.batchNo}`;
               name="manufacturedDate"
               value={productData.manufacturedDate}
               onChange={handleInputChange}
-              className="w-full border border-green-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out"
+              className="border-green-300 focus:border-green-500 focus:ring-green-500"
               required
             />
           </div>
@@ -232,7 +232,7 @@ Batch No: ${result.batchNo}`;
               name="expiryDate"
               value={productData.expiryDate}
               onChange={handleInputChange}
-              className="w-full border border-green-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out"
+              className="border-green-300 focus:border-green-500 focus:ring-green-500"
               required
             />
           </div>

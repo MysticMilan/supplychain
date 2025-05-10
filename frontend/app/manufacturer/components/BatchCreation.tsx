@@ -71,7 +71,7 @@ Name: ${result.name}`;
             placeholder="Enter batch name"
             value={batchData.name}
             onChange={handleInputChange}
-            className="w-full border border-green-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out"
+            className="border-green-300 focus:border-green-500 focus:ring-green-500"
             required
           />
         </div>
@@ -82,7 +82,7 @@ Name: ${result.name}`;
             placeholder="Describe the batch details"
             value={batchData.description}
             onChange={handleInputChange}
-            className="w-full border border-green-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out"
+            className="border-green-300 focus:border-green-500 focus:ring-green-500"
             required
           />
         </div>
