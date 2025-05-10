@@ -201,39 +201,41 @@ Batch No: ${result.batchNo}`;
             )}
           </div>
           <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
+            <Input
+              type="number"
+              name="price"
+              placeholder="Enter price"
+              value={productData.price}
+              onChange={handleInputChange}
+              className="w-full border border-green-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out"
+              required
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">Manufactured Date</label>
             <Input
               type="date"
               name="manufacturedDate"
               value={productData.manufacturedDate}
               onChange={handleInputChange}
-              className="border-green-300 focus:border-green-500 focus:ring-green-500"
+              className="w-full border border-green-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out"
               required
             />
           </div>
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
-          <Input
-            type="date"
-            name="expiryDate"
-            value={productData.expiryDate}
-            onChange={handleInputChange}
-            className="border-green-300 focus:border-green-500 focus:ring-green-500"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
-          <Input
-            type="number"
-            name="price"
-            placeholder="Enter price"
-            value={productData.price}
-            onChange={handleInputChange}
-            className="border-green-300 focus:border-green-500 focus:ring-green-500"
-            required
-          />
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+            <Input
+              type="date"
+              name="expiryDate"
+              value={productData.expiryDate}
+              onChange={handleInputChange}
+              className="w-full border border-green-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out"
+              required
+            />
+          </div>
         </div>
         <Button
           type="submit"

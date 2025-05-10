@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 interface DoneDialogProps {
     message: string;
@@ -16,43 +16,49 @@ export default function DoneDialog({
     autoHide = true
 }: DoneDialogProps) {
     const [isVisible, setIsVisible] = useState(true);
+    const dialogRef = useRef<HTMLDivElement>(null);
+
+    const closeDialog = useCallback(() => {
+        setIsVisible(false);
+        onDone();
+    }, [onDone]);
 
     useEffect(() => {
-        if (!autoHide) return;
-
-        const timer = setTimeout(() => {
-            setIsVisible(false);
-            onDone();
-        }, autoCloseDelay);
-
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
-                setIsVisible(false);
-                onDone();
-                clearTimeout(timer);
+            // Check if the dialog is visible and the key is Enter or Escape
+            if ((e.key === 'Enter' || e.key === 'Escape') && isVisible) {
+                e.preventDefault();
+                closeDialog();
             }
         };
 
+        // Add event listener to the document
         document.addEventListener('keydown', handleKeyDown);
 
+        // Optional: Auto-close timer if autoHide is true
+        let timer: NodeJS.Timeout | null = null;
+        if (autoHide) {
+            timer = setTimeout(closeDialog, autoCloseDelay);
+        }
+
         return () => {
-            clearTimeout(timer);
+            if (timer) clearTimeout(timer);
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [onDone, autoCloseDelay, autoHide]);
+    }, [closeDialog, autoCloseDelay, autoHide, isVisible]);
 
-    // Prevent closing dialog if not visible or autoHide is false
     const handleClose = () => {
-        if (isVisible && autoHide) {
-            setIsVisible(false);
-            onDone();
-        }
+        closeDialog();
     };
 
     if (!isVisible) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div 
+            ref={dialogRef}
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            tabIndex={-1}  // Make div focusable
+        >
             {/* Background */}
             <div className="absolute inset-0 backdrop-blur-sm bg-black/30"></div>
 

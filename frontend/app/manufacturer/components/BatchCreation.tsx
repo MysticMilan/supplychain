@@ -71,7 +71,7 @@ Name: ${result.name}`;
             placeholder="Enter batch name"
             value={batchData.name}
             onChange={handleInputChange}
-            className="border-green-300 focus:border-green-500 focus:ring-green-500"
+            className="w-full border border-green-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out"
             required
           />
         </div>
@@ -82,23 +82,21 @@ Name: ${result.name}`;
             placeholder="Describe the batch details"
             value={batchData.description}
             onChange={handleInputChange}
-            className="border-green-300 focus:border-green-500 focus:ring-green-500"
+            className="w-full border border-green-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200 ease-in-out"
             required
           />
         </div>
         <Button 
           type="submit" 
           disabled={loading}
-          className="w-full bg-green-600 hover:bg-green-700 text-white"
+          className="w-full bg-green-600 hover:bg-green-700 text-white p-2.5 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
         >
           {loading ? 'Creating Batch...' : 'Create Batch'}
         </Button>
       </form>
       {successMessage && (
         <DoneDialog
-          message={`Batch Created Successfully!
-
-${successMessage}`}
+          message={successMessage}
           onDone={() => setSuccessMessage(null)}
           autoHide={false} 
         />
