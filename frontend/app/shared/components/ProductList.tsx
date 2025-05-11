@@ -59,6 +59,7 @@ const ProductList: React.FC<ProductListProps> = ({ onError }) => {
           <thead>
             <tr className="bg-green-100 border-b border-green-200">
               <th className="p-2 text-left">S.N.</th>
+              <th className="p-2 text-left">Product ID</th>
               <th className="p-2 text-left">Name</th>
               <th className="p-2 text-left">Type</th>
               <th className="p-2 text-left">Batch No</th>
@@ -71,10 +72,11 @@ const ProductList: React.FC<ProductListProps> = ({ onError }) => {
           <tbody>
             {filteredProducts.map((product, index) => (
               <tr 
-                key={index} 
+                key={product.productId} 
                 className="border-b border-green-100 hover:bg-green-50 transition-colors duration-200"
               >
                 <td className="p-2">{index + 1}</td>
+                <td className="p-2">{product.productId}</td>
                 <td className="p-2">{product.name}</td>
                 <td className="p-2">{product.productType}</td>
                 <td className="p-2">{product.batchNo}</td>

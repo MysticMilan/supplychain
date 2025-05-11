@@ -29,8 +29,13 @@ export function useProductManagement() {
     ): Promise<{ productId: number; name: string; batchNo: number } | null> => {
       if (!validateContract()) return null;
 
-      if (!name.trim() || !productType.trim() || !description.trim()) {
-        setError("Name, product type, and description are required.");
+      if (!name.trim() || name.length < 2) {
+        setError("Name is required and must be at least 2 characters.");
+        return null;
+      }
+
+      if (price <= 0) {
+        setError("Price must be greater than zero.");
         return null;
       }
 
@@ -106,7 +111,7 @@ export function useProductManagement() {
     [contract, validateContract]
   );
 
-  const updateProductStage = useCallback(
+  const productCheckIn = useCallback(
     async (
       productId: number,
       newStage: Stage,
@@ -114,8 +119,61 @@ export function useProductManagement() {
     ): Promise<boolean> => {
       if (!validateContract()) return false;
 
-      if (!remark.trim() || remark.length < 3) {
-        setError("Remark is required and must be at least 3 characters.");
+      const finalRemark = remark?.trim() || "Product checked in";
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const tx = await contract!.productCheckIn(
+          productId,
+          newStage,
+          finalRemark
+        );
+        const receipt = await tx.wait();
+
+        for (const log of receipt.logs) {
+          if (log.transactionHash !== receipt.hash) continue;
+
+          try {
+            const parsedLog = contract?.interface.parseLog(log);
+            if (parsedLog?.name === "ProductStageUpdated") {
+              return true;
+            }
+          } catch (error) {
+            setError("Failed to parse event log.");
+          }
+        }
+
+        setError("ProductStageUpdated event not found in transaction receipt.");
+        return false;
+      } catch (err: any) {
+        // console.log(err);
+        setError(
+          "Error during product check-in: " +
+            (err?.reason ||
+              err?.revert?.args?.[0] ||
+              err?.toString()?.match(/: (.*?)(?=\s*\()/)?.[1] ||
+              "Unknown error")
+        );
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [contract, validateContract]
+  );
+
+  const productStageUpdate = useCallback(
+    async (
+      productId: number,
+      newStage: Stage,
+      remark: string
+    ): Promise<boolean> => {
+      if (!validateContract()) return false;
+
+      if (!remark.trim() || remark.length < 5) {
+        setError("Remark is required and must be meaningful.");
         return false;
       }
 
@@ -123,7 +181,7 @@ export function useProductManagement() {
       setError(null);
 
       try {
-        const tx = await contract!.updateProductStage(
+        const tx = await contract!.productStageUpdate(
           productId,
           newStage,
           remark
@@ -146,56 +204,8 @@ export function useProductManagement() {
         setError("ProductStageUpdated event not found in transaction receipt.");
         return false;
       } catch (err: any) {
-        // console.log(err);
         setError(
-          "Error updating product stage: " +
-            (err?.reason ||
-              err?.revert?.args?.[0] ||
-              err?.toString()?.match(/: (.*?)(?=\s*\()/)?.[1] ||
-              "Unknown error")
-        );
-        return false;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [contract, validateContract]
-  );
-
-  const markAsLost = useCallback(
-    async (productId: number, remark: string): Promise<boolean> => {
-      if (!validateContract()) return false;
-
-      if (!remark.trim() || remark.length < 3) {
-        setError("Remark is required and must be meaningful.");
-        return false;
-      }
-
-      setLoading(true);
-      setError(null);
-
-      try {
-        const tx = await contract!.markAsLost(productId, remark);
-        const receipt = await tx.wait();
-
-        for (const log of receipt.logs) {
-          if (log.transactionHash !== receipt.hash) continue;
-
-          try {
-            const parsedLog = contract?.interface.parseLog(log);
-            if (parsedLog?.name === "ProductStageUpdated") {
-              return true;
-            }
-          } catch (error) {
-            setError("Failed to parse event log.");
-          }
-        }
-
-        setError("ProductStageUpdated event not found in transaction receipt.");
-        return false;
-      } catch (err: any) {
-        setError(
-          "Error marking product as lost: " +
+          "Error updating product Stage: " +
             (err?.reason ||
               err?.revert?.args?.[0] ||
               err?.toString()?.match(/: (.*?)(?=\s*\()/)?.[1] ||
@@ -241,6 +251,7 @@ export function useProductManagement() {
 
         return {
           product: {
+            productId: Number(product.productId),
             name: product.name,
             batchNo: Number(product.batchNo),
             stage: Number(product.stage),
@@ -281,6 +292,7 @@ export function useProductManagement() {
     try {
       const products = await contract!.getProductsByUser();
       return products.map((p: any) => ({
+        productId: Number(p.productId),
         name: p.name,
         batchNo: Number(p.batchNo),
         stage: Number(p.stage),
@@ -306,8 +318,8 @@ export function useProductManagement() {
 
   return {
     addProduct,
-    updateProductStage,
-    markAsLost,
+    productCheckIn,
+    productStageUpdate,
     getProductDetails,
     getProductsByUser,
     loading,

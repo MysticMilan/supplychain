@@ -14,6 +14,7 @@ export interface IBatch {
 }
 
 export interface IProduct {
+  productId: number;
   name: string;
   batchNo: number;
   stage: Stage;

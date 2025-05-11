@@ -18,13 +18,14 @@ contract SupplyChain {
     //productId -> product stageCount
     mapping(uint256 => uint256) private productStage;
     //productId -> product stageCount -> tracking product struct
-    mapping(uint256 => mapping(uint256 => TrackingProduct)) private trackingProducts;
+    mapping(uint256 => mapping(uint256 => TrackingProduct))
+        private trackingProducts;
     //batchId -> array of productIds
     mapping(uint256 => uint256[]) private productsPerBatch;
     //useraddress -> array of productIds
     mapping(address => uint256[]) private userProducts;
     //useraddress -> productId -> already update or not
-    mapping(address => mapping(uint256 => bool)) private userProductUpdate;
+    mapping(address => mapping(uint256 => bool)) private userProductCheckIn;
     //useraddress -> already exist or not
     mapping(address => bool) public userExist;
     //useraddress array
@@ -64,7 +65,7 @@ contract SupplyChain {
 
     modifier alreadyUpdateCheck(uint256 _productId) {
         require(
-            !userProductUpdate[msg.sender][_productId],
+            !userProductCheckIn[msg.sender][_productId],
             "You have already update this products."
         );
         _;
@@ -83,11 +84,10 @@ contract SupplyChain {
         owner = msg.sender;
     }
 
-    function _isValidRoleForStage(address user, Stage _stage)
-        internal
-        view
-        returns (bool)
-    {
+    function _isValidRoleForStage(
+        address user,
+        Stage _stage
+    ) internal view returns (bool) {
         Role userRole = users[user].role;
         if (_stage == Stage.Manufactured && userRole == Role.Manufacturer)
             return true;
@@ -97,9 +97,6 @@ contract SupplyChain {
             return true;
         if (_stage == Stage.Distributor && userRole == Role.Distributor)
             return true;
-        if (_stage == Stage.Retailer && userRole == Role.Retailer) return true;
-        if (_stage == Stage.Sold && userRole == Role.Retailer) return true;
-
         return false;
     }
 
@@ -108,17 +105,10 @@ contract SupplyChain {
         string memory _place,
         Role _role
     ) public {
-        require(bytes(_name).length > 5, "Proper name is required.");
+        require(bytes(_name).length >= 2 && bytes(_place).length >= 2, "Name/Place too short.");
         require(!userExist[msg.sender], "User already exists.");
-        require(msg.sender != owner, "Owner can not be registered as user.");
-
-        users[msg.sender] = User(
-            msg.sender,
-            _name,
-            _place,
-            _role,
-            UserStatus.Pending
-        );
+        require(msg.sender != owner, "Owner disallowed");
+        users[msg.sender] = User(_name, _place, _role, UserStatus.Pending);
         userExist[msg.sender] = true;
         userList.push(msg.sender);
         userCount++;
@@ -132,61 +122,60 @@ contract SupplyChain {
         string memory _place,
         Role _role
     ) public onlyOwner {
-        require(_wallet != address(0), "Invalid address.");
-        require(bytes(_name).length > 5, "Proper name is required.");
+        require(_wallet != address(0), "Invalid address.");        
+        require(bytes(_name).length >= 2 && bytes(_place).length >= 2, "Name/Place too short.");
         require(!userExist[_wallet], "User already exists.");
-        require(_wallet != owner, "Owner can not be registered as user.");
+        require(_wallet != owner, "Owner disallowed");
 
-        users[_wallet] = User(_wallet, _name, _place, _role, UserStatus.Active);
+        users[_wallet] = User(_name, _place, _role, UserStatus.Active);
         userExist[_wallet] = true;
         userList.push(_wallet);
         userCount++;
         emit UserAdded(_wallet, _name, _role, UserStatus.Active);
     }
 
-    function updateUserStatus(address _wallet, UserStatus newStatus)
-        public
-        onlyOwner
-    {
+    function updateUserStatus(
+        address _wallet,
+        UserStatus newStatus
+    ) public onlyOwner {
         require(_wallet != address(0), "Invalid address.");
-
         UserStatus currentStatus = users[_wallet].status;
         require(
             currentStatus != newStatus,
-            "User is already in the desired state."
+            "Already in desired state."
         );
 
         if (newStatus == UserStatus.Deactivated) {
             require(
                 currentStatus == UserStatus.Active,
-                "User must be Active to be Deactivated."
+                "User must be Active."
             );
         } else if (newStatus == UserStatus.Rejected) {
             require(
                 currentStatus == UserStatus.Pending,
-                "User must be Pending to be Rejected."
+                "User must be Pending."
             );
             userExist[_wallet] = false;
         } else if (newStatus == UserStatus.Active) {
             require(
                 currentStatus == UserStatus.Pending ||
                     currentStatus == UserStatus.Deactivated,
-                "User must be Pending or Deactivated to be Activated."
+                "User must be Pending or Deactivated."
             );
         }
         users[_wallet].status = newStatus;
         emit UserStatusUpdated(_wallet, currentStatus, newStatus);
     }
 
-    function createBatch(string memory _name, string memory _description)
-        public
-        userValidationCheck
-    {
+    function createBatch(
+        string memory _name,
+        string memory _description
+    ) public userValidationCheck {
         require(
             users[msg.sender].role == Role.Manufacturer,
-            "Unauthorized role for create batch."
+            "Unauthorized."
         );
-        require(bytes(_name).length > 5, "Proper name is required.");
+        require(bytes(_name).length >= 2, "Name Too short.");
 
         batchCount++;
         batches[batchCount] = Batch(_name, _description);
@@ -205,17 +194,17 @@ contract SupplyChain {
     ) public userValidationCheck {
         require(
             users[msg.sender].role == Role.Manufacturer,
-            "Unauthorized role for add product."
+            "Unauthorized."
         );
-        require(batchCount > 0, "No batch exists. Create a batch first.");
-        require(
-            _batchNo > 0 && _batchNo <= batchCount,
-            "Invalid Batch Number."
-        );
+        require(_batchNo > 0 && _batchNo <= batchCount, "Invalid batch");
+        require(bytes(_name).length >= 2, "Name Too short");
+        require(_price > 0, "Invalid price");
+
         require(
             _manufacturedDate < block.timestamp,
-            "Manufacture date must be in the past."
+            "Manufacture date must be past."
         );
+
         require(
             _expiryDate > _manufacturedDate,
             "Expiry date must be after manufacture date."
@@ -223,6 +212,7 @@ contract SupplyChain {
 
         productCount++;
         products[productCount] = Product(
+            msg.sender,
             _name,
             _batchNo,
             Stage.Manufactured,
@@ -235,7 +225,7 @@ contract SupplyChain {
         productsPerBatch[_batchNo].push(productCount);
         productStage[productCount] += 1;
         userProducts[msg.sender].push(productCount);
-        userProductUpdate[msg.sender][productCount] = true;
+        userProductCheckIn[msg.sender][productCount] = true;
         trackingProducts[productCount][
             productStage[productCount]
         ] = TrackingProduct(
@@ -250,7 +240,7 @@ contract SupplyChain {
         emit ProductAdded(productCount, _name, _batchNo);
     }
 
-    function updateProductStage(
+    function productCheckIn(
         uint256 _productId,
         Stage _newStage,
         string memory _remark
@@ -261,17 +251,18 @@ contract SupplyChain {
         );
         require(
             _isValidRoleForStage(msg.sender, _newStage),
-            "Unauthorized role for this stage."
+            "Unauthorized."
         );
         require(
-            !userProductUpdate[msg.sender][_productId],
-            "You have already update this product."
+            !userProductCheckIn[msg.sender][_productId],
+            "You have already check-in."
         );
 
         products[_productId].stage = _newStage;
+        products[_productId].ownerWallet = msg.sender;
         productStage[_productId]++;
         userProducts[msg.sender].push(_productId);
-        userProductUpdate[msg.sender][_productId] = true;
+        userProductCheckIn[msg.sender][_productId] = true;
         trackingProducts[_productId][
             productStage[_productId]
         ] = TrackingProduct(
@@ -288,30 +279,31 @@ contract SupplyChain {
         emit ProductStageUpdated(_productId, _newStage, _remark);
     }
 
-    function markAsLost(uint256 _productId, string memory _remark)
-        public
-        invalidProductCheck(_productId)
-        userValidationCheck
-    {
+    function productStageUpdate(
+        uint256 _productId,
+        Stage _newStage,
+        string memory _remark
+    ) public invalidProductCheck(_productId) userValidationCheck {
         require(
-            products[_productId].stage != Stage.Lost,
-            "Product is already marked as lost."
+            products[_productId].ownerWallet == msg.sender,
+            "Unauthorized."
+        );
+        require(
+            _newStage != products[_productId].stage,
+            "Already on desired stage."
+        );
+        require(
+            _newStage == Stage.Lost || _newStage == Stage.Sold,
+            "Invalid Stage transition."
+        );
+        require(
+            bytes(_remark).length >= 5,
+            "Too Short remark."
         );
 
-        require(
-            trackingProducts[_productId][productStage[_productId]]
-                .handlerWallet == msg.sender,
-            "You are not authorized to mark product as Lost."
-        );
-
-        require(
-            bytes(_remark).length > 0,
-            "Remark is required to mark as lost."
-        );
-
-        products[_productId].stage = Stage.Lost;
+        products[_productId].stage = _newStage;
+        products[_productId].ownerWallet = address(0);
         productStage[_productId]++;
-        userProductUpdate[msg.sender][_productId] = true;
         trackingProducts[_productId][
             productStage[_productId]
         ] = TrackingProduct(
@@ -319,13 +311,13 @@ contract SupplyChain {
             block.timestamp,
             0,
             productStage[_productId],
-            Stage.Lost,
+            _newStage,
             _remark
         );
         trackingProducts[_productId][productStage[_productId] - 1]
             .exitTime = block.timestamp;
-               
-        emit ProductStageUpdated(_productId, Stage.Lost, _remark);
+
+        emit ProductStageUpdated(_productId, _newStage, _remark);
     }
 
     // function getAllProductsPerBatch(uint256 _batchNo)
@@ -345,7 +337,9 @@ contract SupplyChain {
     //     return productlist;
     // }
 
-    function getProductDetails(uint256 _productId)
+    function getProductDetails(
+        uint256 _productId
+    )
         public
         view
         returns (
@@ -373,10 +367,25 @@ contract SupplyChain {
         );
     }
 
-    function getAllUserList() public view onlyOwner returns (User[] memory) {
-        User[] memory usersArray = new User[](userCount);
+    function getAllUserList()
+        public
+        view
+        onlyOwner
+        returns (UserResponseStruct[] memory)
+    {
+        UserResponseStruct[] memory usersArray = new UserResponseStruct[](
+            userCount
+        );
         for (uint256 i = 0; i < userCount; i++) {
-            usersArray[i] = users[userList[i]];
+            address userAddr = userList[i];
+            User storage u = users[userAddr];
+            usersArray[i] = UserResponseStruct({
+                wallet: userAddr,
+                name: u.name,
+                place: u.place,
+                role: u.role,
+                status: u.status
+            });
         }
         return (usersArray);
     }
@@ -385,14 +394,30 @@ contract SupplyChain {
         public
         view
         userValidationCheck
-        returns (Product[] memory)
+        returns (ProductResponseStruct[] memory)
     {
         uint256[] memory productArray = userProducts[msg.sender];
         uint256 numOfProducts = productArray.length;
-        Product[] memory productlist = new Product[](numOfProducts);
-        for (uint256 i; i < numOfProducts; i++) {
-            productlist[i] = products[productArray[i]];
+        ProductResponseStruct[]
+            memory productList = new ProductResponseStruct[](numOfProducts);
+
+        for (uint256 i = 0; i < numOfProducts; i++) {
+            uint256 productId = productArray[i];
+            Product storage p = products[productId];
+
+            productList[i] = ProductResponseStruct({
+                productId: productId,
+                ownerWallet: p.ownerWallet,
+                name: p.name,
+                batchNo: p.batchNo,
+                stage: p.stage,
+                productType: p.productType,
+                description: p.description,
+                manufacturedDate: p.manufacturedDate,
+                expiryDate: p.expiryDate,
+                price: p.price
+            });
         }
-        return productlist;
+        return productList;
     }
 }

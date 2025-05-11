@@ -33,8 +33,8 @@ export const useUserManagement = () => {
     } | null> => {
       if (!validateContract()) return null;
 
-      if (!wallet || !name || !place) {
-        setError("All fields are required.");
+      if (!wallet) {
+        setError("Wallet address is required.");
         return null;
       }
 
@@ -43,8 +43,18 @@ export const useUserManagement = () => {
         return null;
       }
 
-      if (name.length <= 5) {
-        setError("Name must be longer than 5 characters.");
+      if (!name || name.length < 2) {
+        setError("Name is required and must be at least 2 characters long.");
+        return null;
+      }
+
+      if (!place || place.length < 2) {
+        setError("Place is required and must be at least 2 characters long.");
+        return null;
+      }
+
+      if (!Object.values(Role).includes(role)) {
+        setError("Invalid role selected.");
         return null;
       }
 
@@ -105,8 +115,19 @@ export const useUserManagement = () => {
       status: UserStatus;
     } | null> => {
       if (!validateContract()) return null;
-      if (name.length <= 5) {
-        setError("Name must be longer than 5 characters.");
+
+      if (!name || name.length < 2) {
+        setError("Name is required and must be at least 2 characters long.");
+        return null;
+      }
+
+      if (!place || place.length < 2) {
+        setError("Place is required and must be at least 2 characters long.");
+        return null;
+      }
+
+      if (!Object.values(Role).includes(role)) {
+        setError("Invalid role selected.");
         return null;
       }
 
@@ -173,6 +194,11 @@ export const useUserManagement = () => {
 
       if (!/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
         setError("Invalid wallet address.");
+        return null;
+      }
+
+      if (!Object.values(UserStatus).includes(newStatus)) {
+        setError("Invalid status selected.");
         return null;
       }
 

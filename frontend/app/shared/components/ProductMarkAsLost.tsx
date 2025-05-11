@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/Textarea';
 import { useProductManagement } from '@/app/hooks/domin/useProductManagement';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import DoneDialog from '@/components/DoneDialog';
+import { Stage } from '@/app/types/enums';
+
 
 interface ProductMarkAsLostProps {
   onSuccess: () => void;
@@ -19,7 +21,7 @@ const ProductMarkAsLost: React.FC<ProductMarkAsLostProps> = ({ onSuccess, onErro
     remarks: ''
   });
 
-  const { markAsLost, loading, error: productError } = useProductManagement();
+  const { productStageUpdate, loading, error: productError } = useProductManagement();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -40,8 +42,9 @@ const ProductMarkAsLost: React.FC<ProductMarkAsLostProps> = ({ onSuccess, onErro
     setShowConfirmDialog(false);
 
     try {
-      const result = await markAsLost(
-        Number(lostProductData.productId), 
+      const result = await productStageUpdate(
+        Number(lostProductData.productId),
+        Stage.Lost,
         lostProductData.remarks
       );
 

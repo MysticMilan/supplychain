@@ -156,7 +156,6 @@ Batch No: ${result.batchNo}`;
             value={productData.productType}
             onChange={handleInputChange}
             className="border-green-300 focus:border-green-500 focus:ring-green-500"
-            required
           />
         </div>
         <div className="mb-4">
@@ -167,7 +166,6 @@ Batch No: ${result.batchNo}`;
             value={productData.description}
             onChange={handleInputChange}
             className="border-green-300 focus:border-green-500 focus:ring-green-500"
-            required
           />
         </div>
         <div className="grid grid-cols-2 gap-4">

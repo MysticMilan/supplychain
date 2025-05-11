@@ -85,6 +85,7 @@ export default function VerifyPage() {
                                     Product Information
                                 </h2>
                                 <div className="grid grid-cols-2 gap-4">
+                                    <p><strong className="text-green-700">Product ID:</strong> {productData.product.productId}</p>
                                     <p><strong className="text-green-700">Name:</strong> {productData.product.name}</p>
                                     <p><strong className="text-green-700">Type:</strong> {productData.product.productType}</p>
                                     <p><strong className="text-green-700">Batch No:</strong> {productData.product.batchNo}</p>

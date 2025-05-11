@@ -24,7 +24,7 @@ const ProductCheckIn: React.FC<ProductCheckInProps> = ({
     remarks: ''
   });
 
-  const { updateProductStage, loading, error: productError } = useProductManagement();
+  const { productCheckIn, loading, error: productError } = useProductManagement();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -39,7 +39,7 @@ const ProductCheckIn: React.FC<ProductCheckInProps> = ({
     e.preventDefault();
 
     try {
-      const result = await updateProductStage(
+      const result = await productCheckIn(
         Number(checkInData.productId), 
         productStage, 
         checkInData.remarks
@@ -91,7 +91,6 @@ Stage: ${Stage[productStage]}`;
             value={checkInData.remarks}
             onChange={handleInputChange}
             className="border-green-300 focus:border-green-500 focus:ring-green-500"
-            required
           />
         </div>
         <Button 
