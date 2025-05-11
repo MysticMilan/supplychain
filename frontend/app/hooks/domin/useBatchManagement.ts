@@ -99,6 +99,9 @@ export const useBatchManagement = () => {
         );
         return null;
       }
+      finally{
+        setLoading(false);
+      }
     },
     [contract, validateContract]
   );

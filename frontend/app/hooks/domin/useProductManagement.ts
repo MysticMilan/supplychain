@@ -306,6 +306,9 @@ export function useProductManagement() {
         );
         return null;
       }
+      finally{
+        setLoading(false);
+      }
     },
     [contract, validateContract]
   );

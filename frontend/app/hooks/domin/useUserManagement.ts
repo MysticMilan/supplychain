@@ -278,6 +278,9 @@ export const useUserManagement = () => {
         );
         return null;
       }
+      finally{
+        setLoading(false);
+      }
     },
     [contract, validateContract]
   );
@@ -308,6 +311,9 @@ export const useUserManagement = () => {
             "Unknown error")
       );
       return [];
+    }
+    finally{
+      setLoading(false);
     }
   }, [contract, validateContract]);
 
