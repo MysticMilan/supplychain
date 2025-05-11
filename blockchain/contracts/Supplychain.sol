@@ -97,6 +97,7 @@ contract SupplyChain {
             return true;
         if (_stage == Stage.Distributor && userRole == Role.Distributor)
             return true;
+        if (_stage == Stage.Retailer && userRole == Role.Retailer) return true;
         return false;
     }
 
@@ -105,7 +106,10 @@ contract SupplyChain {
         string memory _place,
         Role _role
     ) public {
-        require(bytes(_name).length >= 2 && bytes(_place).length >= 2, "Name/Place too short.");
+        require(
+            bytes(_name).length >= 2 && bytes(_place).length >= 2,
+            "Name/Place too short."
+        );
         require(!userExist[msg.sender], "User already exists.");
         require(msg.sender != owner, "Owner disallowed");
         users[msg.sender] = User(_name, _place, _role, UserStatus.Pending);
@@ -122,8 +126,11 @@ contract SupplyChain {
         string memory _place,
         Role _role
     ) public onlyOwner {
-        require(_wallet != address(0), "Invalid address.");        
-        require(bytes(_name).length >= 2 && bytes(_place).length >= 2, "Name/Place too short.");
+        require(_wallet != address(0), "Invalid address.");
+        require(
+            bytes(_name).length >= 2 && bytes(_place).length >= 2,
+            "Name/Place too short."
+        );
         require(!userExist[_wallet], "User already exists.");
         require(_wallet != owner, "Owner disallowed");
 
@@ -140,16 +147,10 @@ contract SupplyChain {
     ) public onlyOwner {
         require(_wallet != address(0), "Invalid address.");
         UserStatus currentStatus = users[_wallet].status;
-        require(
-            currentStatus != newStatus,
-            "Already in desired state."
-        );
+        require(currentStatus != newStatus, "Already in desired state.");
 
         if (newStatus == UserStatus.Deactivated) {
-            require(
-                currentStatus == UserStatus.Active,
-                "User must be Active."
-            );
+            require(currentStatus == UserStatus.Active, "User must be Active.");
         } else if (newStatus == UserStatus.Rejected) {
             require(
                 currentStatus == UserStatus.Pending,
@@ -171,10 +172,7 @@ contract SupplyChain {
         string memory _name,
         string memory _description
     ) public userValidationCheck {
-        require(
-            users[msg.sender].role == Role.Manufacturer,
-            "Unauthorized."
-        );
+        require(users[msg.sender].role == Role.Manufacturer, "Unauthorized.");
         require(bytes(_name).length >= 2, "Name Too short.");
 
         batchCount++;
@@ -192,10 +190,7 @@ contract SupplyChain {
         uint256 _expiryDate,
         uint256 _price
     ) public userValidationCheck {
-        require(
-            users[msg.sender].role == Role.Manufacturer,
-            "Unauthorized."
-        );
+        require(users[msg.sender].role == Role.Manufacturer, "Unauthorized.");
         require(_batchNo > 0 && _batchNo <= batchCount, "Invalid batch");
         require(bytes(_name).length >= 2, "Name Too short");
         require(_price > 0, "Invalid price");
@@ -249,10 +244,7 @@ contract SupplyChain {
             _newStage >= products[_productId].stage,
             "Invalid stage transition."
         );
-        require(
-            _isValidRoleForStage(msg.sender, _newStage),
-            "Unauthorized."
-        );
+        require(_isValidRoleForStage(msg.sender, _newStage), "Unauthorized.");
         require(
             !userProductCheckIn[msg.sender][_productId],
             "You have already check-in."
@@ -296,10 +288,7 @@ contract SupplyChain {
             _newStage == Stage.Lost || _newStage == Stage.Sold,
             "Invalid Stage transition."
         );
-        require(
-            bytes(_remark).length >= 5,
-            "Too Short remark."
-        );
+        require(bytes(_remark).length >= 5, "Too Short remark.");
 
         products[_productId].stage = _newStage;
         products[_productId].ownerWallet = address(0);
@@ -338,52 +327,50 @@ contract SupplyChain {
     // }
 
     function getProductDetails(
-    uint256 _productId
-)
-    public
-    view
-    returns (
-        ProductResponseStruct memory productResponse,
-        Batch memory batchDetails,
-        StageDetails[] memory stageDetails
+        uint256 _productId
     )
-{
-    require(_productId > 0 && _productId <= productCount, "Invalid Product Id");
-    Product storage p = products[_productId];
-    uint256 stageCount = productStage[_productId];
-    StageDetails[] memory productStages = new StageDetails[](stageCount);
+        public
+        view
+        returns (
+            ProductResponseStruct memory productResponse,
+            Batch memory batchDetails,
+            StageDetails[] memory stageDetails
+        )
+    {
+        require(
+            _productId > 0 && _productId <= productCount,
+            "Invalid Product Id"
+        );
+        Product storage p = products[_productId];
+        uint256 stageCount = productStage[_productId];
+        StageDetails[] memory productStages = new StageDetails[](stageCount);
 
-    for (uint256 i = 1; i <= stageCount; i++) {
-        productStages[i - 1] = StageDetails({
-            user: users[trackingProducts[_productId][i].handlerWallet],
-            entryTime: trackingProducts[_productId][i].entryTime,
-            exitTime: trackingProducts[_productId][i].exitTime,
-            remark: trackingProducts[_productId][i].remark,
-            stage: trackingProducts[_productId][i].stage,
-            stageCount: i
+        for (uint256 i = 1; i <= stageCount; i++) {
+            productStages[i - 1] = StageDetails({
+                user: users[trackingProducts[_productId][i].handlerWallet],
+                entryTime: trackingProducts[_productId][i].entryTime,
+                exitTime: trackingProducts[_productId][i].exitTime,
+                remark: trackingProducts[_productId][i].remark,
+                stage: trackingProducts[_productId][i].stage,
+                stageCount: i
+            });
+        }
+
+        productResponse = ProductResponseStruct({
+            productId: _productId,
+            ownerWallet: p.ownerWallet,
+            name: p.name,
+            batchNo: p.batchNo,
+            stage: p.stage,
+            productType: p.productType,
+            description: p.description,
+            manufacturedDate: p.manufacturedDate,
+            expiryDate: p.expiryDate,
+            price: p.price
         });
+
+        return (productResponse, batches[p.batchNo], productStages);
     }
-
-    productResponse = ProductResponseStruct({
-        productId: _productId,
-        ownerWallet: p.ownerWallet,
-        name: p.name,
-        batchNo: p.batchNo,
-        stage: p.stage,
-        productType: p.productType,
-        description: p.description,
-        manufacturedDate: p.manufacturedDate,
-        expiryDate: p.expiryDate,
-        price: p.price
-    });
-
-    return (
-        productResponse,
-        batches[p.batchNo],
-        productStages
-    );
-}
-
 
     function getAllUserList()
         public
