@@ -40,6 +40,18 @@ export default function ProductAddition({ onSuccess, onError }: ProductAdditionP
     }));
   };
 
+  const handleBatchKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const isValid = await handleVerifyBatch();
+      if (isValid) {
+        // Focus the price input field after successful verification
+        const priceInput = document.querySelector('input[name="price"]') as HTMLInputElement;
+        if (priceInput) priceInput.focus();
+      }
+    }
+  };
+
   const fetchBatchDetails = async (batchNo: number) => {
     try {
       const details = await getBatchDetails(batchNo);
@@ -174,22 +186,26 @@ Batch No: ${result.batchNo}`;
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div>
+          <div className="col-span-2 md:col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-2">Batch Number</label>
-            <div className="flex items-center space-x-2">
-              <Input
-                type="text"
-                name="batchNo"
-                placeholder="Enter batch number"
-                value={productData.batchNo}
-                onChange={handleInputChange}
-                className="border-green-300 focus:border-green-500 focus:ring-green-500"
-                required
-              />
+            <div className="flex items-stretch gap-2 w-full">
+              <div className="flex-grow">
+                <Input
+                  type="text"
+                  name="batchNo"
+                  placeholder="Enter batch number"
+                  value={productData.batchNo}
+                  onChange={handleInputChange}
+                  onKeyDown={handleBatchKeyDown}
+                  className="border-green-300 focus:border-green-500 focus:ring-green-500 h-10 w-full"
+                  required
+                />
+              </div>
               <Button
                 type="button"
                 onClick={handleVerifyBatch}
                 variant="primary"
+                className="h-10 w-28 shrink-0"
               >
                 Verify
               </Button>
@@ -200,7 +216,7 @@ Batch No: ${result.batchNo}`;
               </p>
             )}
             {batchError && (
-              <p className="text-red-500 text-sm mt-1">{batchError}</p>
+              <p className="text-sm text-red-600 mt-1">{batchError}</p>
             )}
           </div>
           <div className="mb-4">
