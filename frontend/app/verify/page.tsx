@@ -2,47 +2,33 @@
 
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
+import { Button } from "@/components/ui/Button";
+
 import { useProductManagement } from "../hooks/domin/useProductManagement";
 import { IBatch, IProduct, IStageDetails } from "../types/interface";
-import { Role , Stage } from "../types/enums";
+import { Role, Stage } from "../types/enums";
+
+interface VerifyResult {
+    product: IProduct;
+    batch: IBatch;
+    stages: IStageDetails[];
+}
 
 export default function VerifyPage() {
     const [productId, setProductId] = useState("");
-    const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [productData, setProductData] = useState<{
-        product: IProduct;
-        batch: IBatch;
-        stages: IStageDetails[];
-    } | null>(null);
-
-    const { getProductDetails } = useProductManagement();
+    const [productData, setProductData] = useState<VerifyResult | null>(null);
+    const { getProductDetails, error, loading } = useProductManagement();
 
     const handleVerify = async () => {
-        setError(null);
-        setLoading(true);
         setProductData(null);
 
         try {
-            const parsedId = parseInt(productId);
-            if (isNaN(parsedId) || parsedId < 0) {
-                setError("Please enter a valid product ID.");
-                setLoading(false);
-                return;
+            const details = await getProductDetails(parseInt(productId));
+            if (details) {
+                setProductData(details);
             }
-
-            const details = await getProductDetails(parsedId);
-            if (!details) {
-                setError("No product found with this ID.");
-                setLoading(false);
-                return;
-            }
-
-            setProductData(details);
-        } catch (err: unknown) {
-            setError("Something went wrong. Please try again.");
-        } finally {
-            setLoading(false);
+        } catch {
+            // Error handled by the hook
         }
     };
 
@@ -63,13 +49,21 @@ export default function VerifyPage() {
                             placeholder="Enter Product ID"
                             value={productId}
                             onChange={(e) => setProductId(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !loading) {
+                                    e.preventDefault();
+                                    handleVerify();
+                                }
+                            }}
                         />
-                        <button
+                        <Button
                             onClick={handleVerify}
-                            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500"
+                            disabled={loading}
+                            variant="primary"
+                            className="px-6 py-3 transform hover:scale-105 transition duration-300"
                         >
                             {loading ? "Verifying..." : "Verify"}
-                        </button>
+                        </Button>
                     </div>
 
                     {error && (

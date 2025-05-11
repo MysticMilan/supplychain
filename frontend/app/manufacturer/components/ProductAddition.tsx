@@ -66,7 +66,6 @@ export default function ProductAddition({ onSuccess, onError }: ProductAdditionP
     } catch (error) {
       setBatchDetails(null);
       setBatchError(`Batch does not exist for batch number ${batchNo}`);
-      console.error(error);
       return false;
     }
   };

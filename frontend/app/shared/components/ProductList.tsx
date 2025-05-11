@@ -26,7 +26,6 @@ const ProductList: React.FC<ProductListProps> = ({ onError }) => {
     const fetchProducts = async () => {
       try {
         const userProducts = await getProductsByUser();
-        console.log("userProducts: ", userProducts);
         if (userProducts) {
           setProducts(userProducts);
         }

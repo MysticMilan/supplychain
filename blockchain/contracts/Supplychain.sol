@@ -348,6 +348,7 @@ contract SupplyChain {
         StageDetails[] memory stageDetails
     )
 {
+    require(_productId > 0 && _productId <= productCount, "Invalid Product Id");
     Product storage p = products[_productId];
     uint256 stageCount = productStage[_productId];
     StageDetails[] memory productStages = new StageDetails[](stageCount);
