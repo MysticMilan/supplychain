@@ -10,7 +10,9 @@ export function useProductManagement() {
 
   const validateContract = useCallback((): boolean => {
     if (!contract) {
-      setError("Contract not found. Please connect wallet and network.");
+      setError(
+        "Please switch to the correct network and connect your wallet. Contract not found."
+      );
       return false;
     }
     setError(null);

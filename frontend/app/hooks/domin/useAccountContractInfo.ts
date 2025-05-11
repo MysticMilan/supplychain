@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useMetamask } from "../blockchain/useMetamask";
 import { useSupplyChainContract } from "../blockchain/useSupplyChainContract";
 import { IUser } from "../../types/interface";
 
 export function useAccountContractInfo() {
-  const { provider, userAddress } = useMetamask();
+  const { userAddress } = useMetamask();
   const contract = useSupplyChainContract();
 
   const [owner, setOwner] = useState<string | null>(null);
@@ -13,8 +13,22 @@ export function useAccountContractInfo() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const validateContract = useCallback((): boolean => {
+    if (!contract) {
+      setError(
+        "Please switch to the correct network and connect your wallet. Contract not found."
+      );
+      return false;
+    }
+    setError(null);
+    return true;
+  }, [contract]);
+
   useEffect(() => {
-    if (!provider || !contract) return;
+    if (!validateContract()) {
+      setLoading(false);
+      return;
+    }
 
     let cancelled = false;
 
@@ -23,15 +37,15 @@ export function useAccountContractInfo() {
       setError(null);
 
       try {
-        const onChainOwner = await contract.owner();
+        const onChainOwner = await contract?.owner();
         if (!cancelled) setOwner(onChainOwner);
 
         if (userAddress) {
-          const exists = await contract.userExist(userAddress);
+          const exists = await contract?.userExist(userAddress);
           if (!cancelled) setUserExists(exists);
 
           if (exists) {
-            const u = await contract.users(userAddress);
+            const u = await contract?.users(userAddress);
             if (!cancelled) {
               setUserDetails({
                 wallet: u.wallet,
@@ -65,7 +79,7 @@ export function useAccountContractInfo() {
     return () => {
       cancelled = true;
     };
-  }, [provider, contract, userAddress]);
+  }, [validateContract, userAddress, contract]);
 
   return {
     owner,

@@ -74,6 +74,11 @@ Remarks: ${lostProductData.remarks}`;
     <div className="bg-green-50 border border-green-200 rounded-lg p-6 shadow-md">
       <h2 className="text-2xl font-bold text-green-800 mb-6">Mark Product as Lost</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
+        {productError && (
+          <div className="bg-red-50 border border-red-300 text-red-600 px-4 py-2 rounded mb-4">
+            <p className="font-medium">{productError}</p>
+          </div>
+        )}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">Product ID</label>
           <Input

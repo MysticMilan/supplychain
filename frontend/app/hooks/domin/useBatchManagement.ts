@@ -26,11 +26,10 @@ export const useBatchManagement = () => {
     ): Promise<{ batchId: number; name: string } | null> => {
       if (!validateContract()) return null;
 
-      if (!name.trim() || !description.trim()) {
-        setError("Name and description are required.");
+      if (!name.trim() || name.length < 2) {
+        setError("Name is required and should be at least 2 characters long.");
         return null;
       }
-
       setLoading(true);
       setError(null);
 
@@ -55,7 +54,7 @@ export const useBatchManagement = () => {
           }
         }
 
-        setError("Batch created successfully, but no event found in logs.");
+        setError("BatchCreated event not found in transaction receipt.");
         return null;
       } catch (err: any) {
         setError(
