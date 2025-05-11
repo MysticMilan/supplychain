@@ -45,7 +45,6 @@ export default function ProductAddition({ onSuccess, onError }: ProductAdditionP
       e.preventDefault();
       const isValid = await handleVerifyBatch();
       if (isValid) {
-        // Focus the price input field after successful verification
         const priceInput = document.querySelector('input[name="price"]') as HTMLInputElement;
         if (priceInput) priceInput.focus();
       }
