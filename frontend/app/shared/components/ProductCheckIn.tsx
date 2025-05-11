@@ -101,7 +101,8 @@ Stage: ${Stage[productStage]}`;
         <Button 
           type="submit" 
           disabled={loading}
-          className="w-full bg-green-600 hover:bg-green-700 text-white"
+          variant="primary"
+          className="w-full"
         >
           {loading ? 'Checking In...' : 'Check In Product'}
         </Button>

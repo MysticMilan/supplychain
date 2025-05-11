@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/Button';
 import { IUser } from '../../types/interface';
 import { Role, UserStatus } from '../../types/enums';
 import { useUserManagement } from '../../hooks/domin/useUserManagement';
@@ -84,55 +85,60 @@ const UserList: React.FC<UserListProps> = ({ onError }) => {
         }
 
         const actions: React.ReactNode[] = [
-            <button
+            <Button
                 key="block"
                 onClick={() => confirmAndUpdateStatus(wallet, UserStatus.Blocked)}
-                className="bg-gray-800 text-white px-3 py-1 rounded text-xs hover:bg-gray-900"
+                variant="destructive"
+                className="text-xs"
             >
                 Block
-            </button>
+            </Button>
         ];
 
         if (status === UserStatus.Pending) {
             actions.push(
-                <button
+                <Button
                     key="verify"
                     onClick={() => confirmAndUpdateStatus(wallet, UserStatus.Active)}
-                    className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700"
+                    variant="primary"
+                    className="text-xs"
                 >
                     Verify
-                </button>,
-                <button
+                </Button>,
+                <Button
                     key="reject"
                     onClick={() => confirmAndUpdateStatus(wallet, UserStatus.Rejected)}
-                    className="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700"
+                    variant="danger"
+                    className="text-xs"
                 >
                     Reject
-                </button>
+                </Button>
             );
         }
 
         if (status === UserStatus.Active) {
             actions.push(
-                <button
+                <Button
                     key="deactivate"
                     onClick={() => confirmAndUpdateStatus(wallet, UserStatus.Deactivated)}
-                    className="bg-yellow-600 text-white px-3 py-1 rounded text-xs hover:bg-yellow-700"
+                    variant="warning"
+                    className="text-xs"
                 >
                     Deactivate
-                </button>
+                </Button>
             );
         }
 
         if (status === UserStatus.Deactivated) {
             actions.push(
-                <button
+                <Button
                     key="activate"
                     onClick={() => confirmAndUpdateStatus(wallet, UserStatus.Active)}
-                    className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700"
+                    variant="primary"
+                    className="text-xs"
                 >
                     Activate
-                </button>
+                </Button>
             );
         }
 
@@ -213,7 +219,7 @@ const UserList: React.FC<UserListProps> = ({ onError }) => {
                 <button 
                     onClick={fetchUsers} 
                     disabled={loading}
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition disabled:opacity-50"
+                    className="bg-green-600 hover:bg-green-700 text-white p-2.5 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
                 >
                     {loading ? 'Refreshing...' : 'Refresh'}
                 </button>

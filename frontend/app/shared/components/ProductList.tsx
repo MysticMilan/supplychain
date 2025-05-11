@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/Button';
 import { useProductManagement } from '@/app/hooks/domin/useProductManagement';
 import { useAccountContractInfo } from '@/app/hooks/domin/useAccountContractInfo';
 import { IProduct } from '@/app/types/interface';
@@ -124,7 +125,7 @@ const ProductList: React.FC<ProductListProps> = ({ onError }) => {
             </SelectContent>
           </Select>
         </div>
-        <button 
+        <Button 
           onClick={() => {
             setLoading(true);
             getProductsByUser().then((userProducts) => {
@@ -138,10 +139,10 @@ const ProductList: React.FC<ProductListProps> = ({ onError }) => {
             });
           }} 
           disabled={loading}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition disabled:opacity-50"
+          variant="primary"
         >
           {loading ? 'Refreshing...' : 'Refresh'}
-        </button>
+        </Button>
       </div>
 
       {/* Product Table */}

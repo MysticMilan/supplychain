@@ -248,6 +248,17 @@ export const useUserManagement = () => {
     async (userAddress: string): Promise<IUser | null> => {
       if (!validateContract()) return null;
 
+      if (!userAddress) {
+        setError("Wallet address is required.");
+        return null;
+      }
+      if (!/^0x[a-fA-F0-9]{40}$/.test(userAddress)) {
+        setError("Invalid wallet address.");
+        return null;
+      }
+      setLoading(true);
+      setError(null);
+
       try {
         const user = await contract!.users(userAddress);
         return {
@@ -273,7 +284,8 @@ export const useUserManagement = () => {
 
   const getAllUsers = useCallback(async (): Promise<IUser[]> => {
     if (!validateContract()) return [];
-
+    setLoading(true);
+    setError(null);
     try {
       const users = await contract!.getAllUserList();
       if (!users || users.length === 0) {

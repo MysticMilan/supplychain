@@ -121,6 +121,16 @@ export function useProductManagement() {
     ): Promise<boolean> => {
       if (!validateContract()) return false;
 
+      if(productId <= 0) {
+        setError("Invalid product ID.");
+        return false;
+      }
+
+      if(Object.values(Stage).includes(newStage) === false) {
+        setError("Invalid stage selected.");
+        return false;
+      }
+
       const finalRemark = remark?.trim() || "Product checked in";
 
       setLoading(true);
@@ -173,6 +183,16 @@ export function useProductManagement() {
       remark: string
     ): Promise<boolean> => {
       if (!validateContract()) return false;
+
+      if(productId <= 0) {
+        setError("Invalid product ID.");
+        return false;
+      }
+
+      if(Object.values(Stage).includes(newStage) === false) {
+        setError("Invalid stage selected.");
+        return false;
+      }
 
       if (!remark.trim() || remark.length < 5) {
         setError("Remark is required and must be meaningful.");
@@ -230,6 +250,13 @@ export function useProductManagement() {
       stages: IStageDetails[];
     } | null> => {
       if (!validateContract()) return null;
+
+      if (productId <= 0) {
+        setError("Invalid product ID.");
+        return null;
+      }
+      setLoading(true);
+      setError(null);
 
       try {
         const [product, batch, stages] = await contract!.getProductDetails(

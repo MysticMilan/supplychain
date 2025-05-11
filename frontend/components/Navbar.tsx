@@ -1,22 +1,19 @@
 import Image from "next/image";
 import { useMetamask } from "@/app/hooks/blockchain/useMetamask";
-import { useState, useEffect } from "react";
-import Link from "next/link"; // Import Link from Next.js
+import { useEffect } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/Button";
+import { toast } from "sonner";
 
 export default function Navbar() {
     const { userAddress, connect, disconnect, networkError, connectionStatus } = useMetamask();
 
-    const [showToast, setShowToast] = useState(false);
-
     useEffect(() => {
         // Show toast when connectionStatus is set
-        if (connectionStatus) {
-            setShowToast(true);
-            setTimeout(() => {
-                setShowToast(false);
-            }, 3000); // Hide toast after 3 seconds
+        if (connectionStatus && !networkError) {
+            toast.success(connectionStatus);
         }
-    }, [connectionStatus]);
+    }, [connectionStatus, networkError]);
 
     return (
         <>
@@ -67,51 +64,24 @@ export default function Navbar() {
 
                     {/* Show Connect / Disconnect button */}
                     {userAddress ? (
-                        <button
+                        <Button
                             onClick={disconnect}
-                            className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-all"
+                            variant="danger"
                         >
                             Disconnect
-                        </button>
+                        </Button>
                     ) : (
-                        <button
+                        <Button
                             onClick={connect}
-                            className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-all"
+                            variant="primary"
                         >
                             Connect Wallet
-                        </button>
+                        </Button>
                     )}
                 </div>
             </nav>
 
-            {/* Display Toast in the top-right corner */}
-            {showToast && connectionStatus && !networkError && (
-                <div className="fixed top-16 right-4 bg-green-500 text-white text-sm py-2 px-4 rounded-lg shadow-lg transition-all opacity-100 animate-fadeInOut">
-                    {connectionStatus}
-                </div>
-            )}
 
-            {/* Inline CSS for toast animation */}
-            <style jsx>{`
-                @keyframes fadeInOut {
-                    0% {
-                        opacity: 0;
-                        transform: translateY(-20px);
-                    }
-                    50% {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                    100% {
-                        opacity: 0;
-                        transform: translateY(20px);
-                    }
-                }
-
-                .animate-fadeInOut {
-                    animation: fadeInOut 4s ease-in-out forwards;
-                }
-            `}</style>
         </>
     );
 }

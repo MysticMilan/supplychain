@@ -105,7 +105,8 @@ Remarks: ${lostProductData.remarks}`;
         <Button 
           type="submit" 
           disabled={loading}
-          className="w-full bg-red-600 hover:bg-red-700 text-white"
+          variant="danger"
+          className="w-full"
         >
           {loading ? 'Marking as Lost...' : 'Mark Product as Lost'}
         </Button>

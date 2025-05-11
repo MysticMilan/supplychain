@@ -23,19 +23,22 @@ export default function Home() {
         <p className="text-lg max-w-xl mb-8">
           Empowering transparency in the tea supply chain — from garden to your cup 🍵
         </p>
-        <Link
-          href="/verify"
-          className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition"
-        >
-          Track Your Tea
-        </Link>
+        <div className="space-y-4"> {/* Removed w-full/max-w-sm to prevent conflict */}
+          <Link
+            href="/verify"
+            className="block w-48 mx-auto bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg shadow-md text-lg font-medium transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+          >
+            Track Your Tea
+          </Link>
 
-        <button
-          onClick={togglePopup}
-          className="mt-6 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition"
-        >
-          Register User
-        </button>
+          <button
+            onClick={togglePopup}
+            className="block w-48 mx-auto bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg shadow-md text-lg font-medium transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+          >
+            Register User
+          </button>
+        </div>
+
 
         {/* Popup for Register User Form */}
         {isPopupOpen && (

@@ -13,7 +13,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
-import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
 
 export default function AdminDashboard() {
@@ -56,8 +55,6 @@ export default function AdminDashboard() {
   return (
     <div className="container mx-auto p-6 bg-white">
       <Navbar />
-      <Toaster />
-
       <h1 className="text-3xl font-bold mb-6 text-green-800">Admin Dashboard</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

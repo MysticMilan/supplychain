@@ -94,7 +94,8 @@ Name: ${result.name}`;
         <Button 
           type="submit" 
           disabled={loading}
-          className="w-full bg-green-600 hover:bg-green-700 text-white p-2.5 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+          variant="primary"
+          className="w-full"
         >
           {loading ? 'Creating Batch...' : 'Create Batch'}
         </Button>

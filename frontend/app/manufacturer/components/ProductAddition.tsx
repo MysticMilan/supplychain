@@ -104,10 +104,10 @@ export default function ProductAddition({ onSuccess, onError }: ProductAdditionP
 Product ID: ${result.productId}
 Name: ${result.name}
 Batch No: ${result.batchNo}`;
-        
+
         setSuccessMessage(successMsg);
         onSuccess(result);
-        
+
         // Reset form
         setProductData({
           name: '',
@@ -189,7 +189,7 @@ Batch No: ${result.batchNo}`;
               <Button
                 type="button"
                 onClick={handleVerifyBatch}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                variant="primary"
               >
                 Verify
               </Button>
@@ -243,7 +243,8 @@ Batch No: ${result.batchNo}`;
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-600 hover:bg-green-700 text-white"
+          variant="primary"
+          className="w-full"
         >
           {loading ? 'Adding Product...' : 'Add Product'}
         </Button>

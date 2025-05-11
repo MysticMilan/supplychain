@@ -7,7 +7,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../components/ui/tabs";
-import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import ProductAddition from "./components/ProductAddition";
 import ProductList from "../shared/components/ProductList";
@@ -74,8 +73,6 @@ export default function ManufacturerDashboard() {
   return (
     <div className="container mx-auto p-6 bg-white min-h-screen">
       <Navbar />
-
-      <Toaster />
       <h1 className="text-3xl font-bold mb-6 text-green-800">Manufacturer Dashboard</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

@@ -76,6 +76,13 @@ export const useBatchManagement = () => {
     async (batchId: number): Promise<IBatch | null> => {
       if (!validateContract()) return null;
 
+      if (batchId <= 0) {
+        setError("Invalid batch ID.");
+        return null;
+      }
+      setLoading(true);
+      setError(null);
+
       try {
         const batch = await contract!.batches(batchId);
         return {

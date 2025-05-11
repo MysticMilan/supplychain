@@ -5,6 +5,7 @@ import { Role, UserStatus } from '../../types/enums';
 import { useUserManagement } from '../../hooks/domin/useUserManagement';
 import DoneDialog from '@/components/DoneDialog';
 import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const roles = Object.keys(Role).filter((r) => isNaN(Number(r)));
@@ -113,13 +114,14 @@ Status: ${UserStatus[result.status]}`;
                         </Select>
                     </div>
 
-                    <button
+                    <Button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded transition duration-300"
+                        variant="primary"
+                        className="w-full"
                     >
                         {loading ? 'Adding User...' : 'Add User'}
-                    </button>
+                    </Button>
                 </fieldset>
             </form>
             {successMessage && (
