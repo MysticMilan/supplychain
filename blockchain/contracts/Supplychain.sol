@@ -338,34 +338,51 @@ contract SupplyChain {
     // }
 
     function getProductDetails(
-        uint256 _productId
+    uint256 _productId
+)
+    public
+    view
+    returns (
+        ProductResponseStruct memory productResponse,
+        Batch memory batchDetails,
+        StageDetails[] memory stageDetails
     )
-        public
-        view
-        returns (
-            Product memory product,
-            Batch memory batchDetails,
-            StageDetails[] memory stageDetails
-        )
-    {
-        uint256 stageCount = productStage[_productId];
-        StageDetails[] memory productStages = new StageDetails[](stageCount);
-        for (uint256 i = 1; i <= stageCount; i++) {
-            productStages[i - 1] = StageDetails({
-                user: users[trackingProducts[_productId][i].handlerWallet],
-                entryTime: trackingProducts[_productId][i].entryTime,
-                exitTime: trackingProducts[_productId][i].exitTime,
-                remark: trackingProducts[_productId][i].remark,
-                stage: trackingProducts[_productId][i].stage,
-                stageCount: i
-            });
-        }
-        return (
-            products[_productId],
-            batches[products[_productId].batchNo],
-            productStages
-        );
+{
+    Product storage p = products[_productId];
+    uint256 stageCount = productStage[_productId];
+    StageDetails[] memory productStages = new StageDetails[](stageCount);
+
+    for (uint256 i = 1; i <= stageCount; i++) {
+        productStages[i - 1] = StageDetails({
+            user: users[trackingProducts[_productId][i].handlerWallet],
+            entryTime: trackingProducts[_productId][i].entryTime,
+            exitTime: trackingProducts[_productId][i].exitTime,
+            remark: trackingProducts[_productId][i].remark,
+            stage: trackingProducts[_productId][i].stage,
+            stageCount: i
+        });
     }
+
+    productResponse = ProductResponseStruct({
+        productId: _productId,
+        ownerWallet: p.ownerWallet,
+        name: p.name,
+        batchNo: p.batchNo,
+        stage: p.stage,
+        productType: p.productType,
+        description: p.description,
+        manufacturedDate: p.manufacturedDate,
+        expiryDate: p.expiryDate,
+        price: p.price
+    });
+
+    return (
+        productResponse,
+        batches[p.batchNo],
+        productStages
+    );
+}
+
 
     function getAllUserList()
         public

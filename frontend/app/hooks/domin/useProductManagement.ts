@@ -2,9 +2,11 @@ import { useState, useCallback } from "react";
 import { useSupplyChainContract } from "../blockchain/useSupplyChainContract";
 import { IProduct, IStageDetails } from "../../types/interface";
 import { Stage } from "../../types/enums";
+import { useReadOnlyContract } from "../blockchain/useReadOnlyContract";
 
 export function useProductManagement() {
   const contract = useSupplyChainContract();
+  const readOnlyContract = useReadOnlyContract();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -121,12 +123,12 @@ export function useProductManagement() {
     ): Promise<boolean> => {
       if (!validateContract()) return false;
 
-      if(productId <= 0) {
+      if (productId <= 0) {
         setError("Invalid product ID.");
         return false;
       }
 
-      if(Object.values(Stage).includes(newStage) === false) {
+      if (Object.values(Stage).includes(newStage) === false) {
         setError("Invalid stage selected.");
         return false;
       }
@@ -184,12 +186,12 @@ export function useProductManagement() {
     ): Promise<boolean> => {
       if (!validateContract()) return false;
 
-      if(productId <= 0) {
+      if (productId <= 0) {
         setError("Invalid product ID.");
         return false;
       }
 
-      if(Object.values(Stage).includes(newStage) === false) {
+      if (Object.values(Stage).includes(newStage) === false) {
         setError("Invalid stage selected.");
         return false;
       }
@@ -249,7 +251,10 @@ export function useProductManagement() {
       batch: { name: string; description: string };
       stages: IStageDetails[];
     } | null> => {
-      if (!validateContract()) return null;
+      if (!readOnlyContract) {
+        setError("ReadOnly contract not found.");
+        return null;
+      }
 
       if (productId <= 0) {
         setError("Invalid product ID.");
@@ -259,9 +264,8 @@ export function useProductManagement() {
       setError(null);
 
       try {
-        const [product, batch, stages] = await contract!.getProductDetails(
-          productId
-        );
+        const [product, batch, stages] =
+          await readOnlyContract!.getProductDetails(productId);
 
         const formattedStages: IStageDetails[] = stages.map((stage: any) => ({
           user: {
@@ -305,12 +309,11 @@ export function useProductManagement() {
               "Unknown error")
         );
         return null;
-      }
-      finally{
+      } finally {
         setLoading(false);
       }
     },
-    [contract, validateContract]
+    [readOnlyContract]
   );
 
   const getProductsByUser = useCallback(async (): Promise<

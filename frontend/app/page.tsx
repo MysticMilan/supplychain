@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import RegisterUserForm from "./admin/components/RegisterUserForm"; // Import the register user form
+import RegisterUserForm from "./admin/components/RegisterUserForm";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 export default function Home() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -24,19 +25,19 @@ export default function Home() {
           Empowering transparency in the tea supply chain — from garden to your cup 🍵
         </p>
         <div className="space-y-4"> {/* Removed w-full/max-w-sm to prevent conflict */}
-          <Link
-            href="/verify"
-            className="block w-48 mx-auto bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg shadow-md text-lg font-medium transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-          >
-            Track Your Tea
+          <Link href="/verify" className="block w-48 mx-auto">
+            <Button variant="primary" className="w-full">
+              Track Your Tea
+            </Button>
           </Link>
 
-          <button
+          <Button
             onClick={togglePopup}
-            className="block w-48 mx-auto bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg shadow-md text-lg font-medium transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+            variant="primary"
+            className="w-48"
           >
             Register User
-          </button>
+          </Button>
         </div>
 
 
@@ -45,12 +46,13 @@ export default function Home() {
           <div className="fixed inset-0 z-50 backdrop-blur-sm bg-black/20 flex items-center justify-center p-4">
             <div className="bg-white w-full max-w-4xl rounded-lg shadow-2xl">
               <div className="relative p-8">
-                <button
+                <Button
                   onClick={togglePopup}
-                  className="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
+                  variant="secondary"
+                  className="absolute top-4 right-4 p-2 min-w-0 w-auto h-auto"
                 >
                   ✖
-                </button>
+                </Button>
                 <RegisterUserForm />
               </div>
             </div>
