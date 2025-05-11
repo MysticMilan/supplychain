@@ -88,7 +88,6 @@ Name: ${result.name}`;
             value={batchData.description}
             onChange={handleInputChange}
             className="border-green-300 focus:border-green-500 focus:ring-green-500"
-            required
           />
         </div>
         <Button 
