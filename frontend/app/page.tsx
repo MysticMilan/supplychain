@@ -87,13 +87,13 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8">
+      <footer className="bg-green-900 text-white py-8">
         <div className="container mx-auto px-4 text-center">
           <div className="mb-6">
-            <Image src="/assets/logo.svg" alt="ChiyaChain Logo" width={120} height={32} className="mx-auto" />
+            <Image src="/assets/logowhite.svg" alt="ChiyaChain Logo" width={120} height={32} className="mx-auto" />
           </div>
           <div className="mb-8"></div>
-          <p className="text-gray-400">&copy; CodeKiro 2025. All rights reserved.</p>
+          <p className="text-gray-100">&copy; CodeKiro 2025. All rights reserved.</p>
         </div>
       </footer>
 
