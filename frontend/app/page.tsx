@@ -32,7 +32,9 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-green-900/60 to-green-800/80" />
         </div>
         <div className="relative z-10 flex flex-col items-center justify-center min-h-[70vh] px-4 text-center text-white">
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-5 drop-shadow-lg animate-fade-in-up">ChiyaChain</h1>
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-5 drop-shadow-lg animate-fade-in-up"
+            style={{ color: "#ffac1c" }}
+          >ChiyaChain</h1>
           <p className="text-xl md:text-2xl max-w-2xl mx-auto mb-10 opacity-90 animate-fade-in-up delay-100">
             Next-generation transparency for the tea supply chain — from garden to your cup.
           </p>
@@ -44,8 +46,8 @@ export default function Home() {
               About Us
             </button>
             <Link href="/verify">
-              <Button 
-                variant="primary" 
+              <Button
+                variant="primary"
                 className="bg-green-600 hover:bg-green-700 text-white font-semibold transition-colors px-8 py-3 text-lg shadow"
               >
                 Track Your Tea
@@ -125,7 +127,7 @@ export default function Home() {
               <div className="flex gap-4 mt-2 justify-center">
                 <a href="https://x.com/MysticMilan369" target="_blank" rel="noopener noreferrer" className="hover:text-green-300 transition" title="X (formerly Twitter)">
                   <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none">
-                    <path d="M87.6 28.5H103.2L69.6 67.3L109.2 119.2H82.7L58.7 88.6L31.5 119.2H15.8L51.3 77.1L13.2 28.5H40.2L61.3 56.9L87.6 28.5ZM83.1 111.2H91.3L39.7 36.1H31.1L83.1 111.2Z" fill="white"/>
+                    <path d="M87.6 28.5H103.2L69.6 67.3L109.2 119.2H82.7L58.7 88.6L31.5 119.2H15.8L51.3 77.1L13.2 28.5H40.2L61.3 56.9L87.6 28.5ZM83.1 111.2H91.3L39.7 36.1H31.1L83.1 111.2Z" fill="white" />
                   </svg>
                 </a>
                 <a href="https://instagram.com/MysticMilan369" target="_blank" rel="noopener noreferrer" className="hover:text-green-300 transition" title="Instagram">
