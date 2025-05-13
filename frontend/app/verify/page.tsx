@@ -14,6 +14,8 @@ interface VerifyResult {
     stages: IStageDetails[];
 }
 
+import Footer from '../shared/Footer';
+
 export default function VerifyPage() {
     const [productId, setProductId] = useState("");
     const [productData, setProductData] = useState<VerifyResult | null>(null);
@@ -33,9 +35,9 @@ export default function VerifyPage() {
     };
 
     return (
-        <div className="min-h-screen bg-green-50">
+        <div className="min-h-screen flex flex-col bg-green-50">
+          <div className="flex-grow">
             <Navbar />
-
             <div className="max-w-3xl mx-auto mt-10 px-4">
                 <div className="bg-white border border-green-200 rounded-2xl shadow-lg p-8">
                     <h1 className="text-4xl font-bold mb-6 text-green-800 text-center">
@@ -116,6 +118,8 @@ export default function VerifyPage() {
                     )}
                 </div>
             </div>
+        </div>
+        <Footer />
         </div>
     );
 }

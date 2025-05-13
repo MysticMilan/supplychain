@@ -4,6 +4,11 @@
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.23.0"
   },
+  "scripts": {
+    "hardhat:compile": "npx hardhat compile",
+    "hardhat:deploy": "npx hardhat run scripts/deploy.js --network localhost",
+    "sepolia:deploy": "npx hardhat run scripts/deploy.js --network sepolia"  
+  },
   "dependencies": {
     "dotenv": "^16.5.0"
   }

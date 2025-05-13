@@ -16,6 +16,7 @@ import { useAccountContractInfo } from "../hooks/domin/useAccountContractInfo";
 import { useMetamask } from "../hooks/blockchain/useMetamask";
 import Navbar from "@/components/Navbar";
 import { Role, Stage } from "../types/enums";
+import Footer from '../shared/Footer';
 
 export default function TransporterDashboard() {
   const { userExists, userDetails } = useAccountContractInfo();
@@ -69,25 +70,27 @@ export default function TransporterDashboard() {
   }
 
   return (
-    <div className="container mx-auto p-6 bg-white min-h-screen">
-      <Navbar />
-      <h1 className="text-3xl font-bold mb-6 text-green-800">Transporter Dashboard</h1>
+    <div className="min-h-screen flex flex-col">
+      <main className="flex-grow">
+        <div className="container mx-auto p-6 bg-white">
+          <Navbar />
+          <h1 className="text-3xl font-bold mb-6 text-green-800">Transporter Dashboard</h1>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="flex w-full space-x-2 overflow-x-auto bg-green-100 p-1 rounded-lg">
-          <TabsTrigger
-            value="list"
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Product List</TabsTrigger>
-          <TabsTrigger
-            value="product-checkin"
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Product Check-In</TabsTrigger>
-          <TabsTrigger 
-            value="mark-as-lost" 
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Mark as Lost</TabsTrigger>
-        </TabsList>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="flex w-full space-x-2 overflow-x-auto bg-green-100 p-1 rounded-lg">
+              <TabsTrigger
+                value="list"
+                className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+              >Product List</TabsTrigger>
+              <TabsTrigger
+                value="product-checkin"
+                className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+              >Product Check-In</TabsTrigger>
+              <TabsTrigger 
+                value="mark-as-lost" 
+                className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+              >Mark as Lost</TabsTrigger>
+            </TabsList>
 
         <TabsContent value="list">
           <ProductList onError={(error: string) => handleError(error)} />
@@ -110,6 +113,9 @@ export default function TransporterDashboard() {
           />
         </TabsContent>
       </Tabs>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 }

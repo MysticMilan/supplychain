@@ -17,6 +17,7 @@ import ProductMarkAsLost from "../shared/components/ProductMarkAsLost";
 import { useAccountContractInfo } from "../hooks/domin/useAccountContractInfo";
 import { useMetamask } from "../hooks/blockchain/useMetamask";
 import Navbar from "@/components/Navbar";
+import Footer from '../shared/Footer';
 import { Role, Stage } from "../types/enums";
 
 export default function ManufacturerDashboard() {
@@ -71,77 +72,82 @@ export default function ManufacturerDashboard() {
   }
 
   return (
-    <div className="container mx-auto p-6 bg-white min-h-screen">
-      <Navbar />
-      <h1 className="text-3xl font-bold mb-6 text-green-800">Manufacturer Dashboard</h1>
+    <div className="min-h-screen flex flex-col">
+      <main className="flex-grow">
+        <div className="container mx-auto p-6 bg-white">
+          <Navbar />
+          <h1 className="text-3xl font-bold mb-6 text-green-800">Manufacturer Dashboard</h1>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="flex w-full space-x-2 overflow-x-auto bg-green-100 p-1 rounded-lg">
-          <TabsTrigger
-            value="list"
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Product List</TabsTrigger>
-          <TabsTrigger
-            value="product-checkin"
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Product Check-In</TabsTrigger>
-          <TabsTrigger 
-            value="batch" 
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Create Batch</TabsTrigger>
-          <TabsTrigger 
-            value="product-add" 
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Add Product</TabsTrigger>
-          <TabsTrigger 
-            value="mark-as-lost" 
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Mark as Lost</TabsTrigger>
-        </TabsList>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="flex w-full space-x-2 overflow-x-auto bg-green-100 p-1 rounded-lg">
+            <TabsTrigger
+              value="list"
+              className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+            >Product List</TabsTrigger>
+            <TabsTrigger
+              value="product-checkin"
+              className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+            >Product Check-In</TabsTrigger>
+            <TabsTrigger 
+              value="batch" 
+              className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+            >Create Batch</TabsTrigger>
+            <TabsTrigger 
+              value="product-add" 
+              className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+            >Add Product</TabsTrigger>
+            <TabsTrigger 
+              value="mark-as-lost" 
+              className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+            >Mark as Lost</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="list">
-          <ProductList onError={(error: string) => handleError(error)} />
-        </TabsContent>
+          <TabsContent value="list">
+            <ProductList onError={(error: string) => handleError(error)} />
+          </TabsContent>
 
-        <TabsContent value="product-checkin">
-          <ProductCheckIn
-            onSuccess={() => handleSuccess("Product checked in successfully")}
-            onError={(error: string) => handleError(error)}
-            productStage={Stage.Manufactured}
-          />
-        </TabsContent>
+          <TabsContent value="product-checkin">
+            <ProductCheckIn
+              onSuccess={() => handleSuccess("Product checked in successfully")}
+              onError={(error: string) => handleError(error)}
+              productStage={Stage.Manufactured}
+            />
+          </TabsContent>
 
-        <TabsContent value="batch">
-          <BatchCreation
-            onSuccess={({ batchId, name }) =>
-              handleSuccess(
-                `Batch ${name} (ID: ${batchId}) created successfully`
-              )
-            }
-            onError={(error: string) => handleError(error)}
-          />
-        </TabsContent>
+          <TabsContent value="batch">
+            <BatchCreation
+              onSuccess={({ batchId, name }) =>
+                handleSuccess(
+                  `Batch ${name} (ID: ${batchId}) created successfully`
+                )
+              }
+              onError={(error: string) => handleError(error)}
+            />
+          </TabsContent>
 
-        <TabsContent value="product-add">
-          <ProductAddition
-            onSuccess={({ productId, name, batchNo }) =>
-              handleSuccess(
-                `Product ${name} (ID: ${productId}, Batch: ${batchNo}) added successfully`
-              )
-            }
-            onError={(error: string) => handleError(error)}
-          />
-        </TabsContent>
+          <TabsContent value="product-add">
+            <ProductAddition
+              onSuccess={({ productId, name, batchNo }) =>
+                handleSuccess(
+                  `Product ${name} (ID: ${productId}, Batch: ${batchNo}) added successfully`
+                )
+              }
+              onError={(error: string) => handleError(error)}
+            />
+          </TabsContent>
 
-        <TabsContent value="mark-as-lost">
-          <ProductMarkAsLost
-            onSuccess={() =>
-              handleSuccess("Product marked as lost successfully")
-            }
-            onError={(error) => handleError(error)}
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="mark-as-lost">
+            <ProductMarkAsLost
+              onSuccess={() =>
+                handleSuccess("Product marked as lost successfully")
+              }
+              onError={(error) => handleError(error)}
+            />
+          </TabsContent>
+        </Tabs>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 }

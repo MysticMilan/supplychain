@@ -14,6 +14,7 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import Footer from '../shared/Footer';
 
 export default function AdminDashboard() {
   const { userAddress } = useMetamask();
@@ -53,33 +54,37 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="container mx-auto p-6 bg-white">
-      <Navbar />
-      <h1 className="text-3xl font-bold mb-6 text-green-800">Admin Dashboard</h1>
+    <div className="min-h-screen flex flex-col">
+      <main className="flex-grow">
+        <div className="container mx-auto p-6 bg-white">
+          <Navbar />
+          <h1 className="text-3xl font-bold mb-6 text-green-800">Admin Dashboard</h1>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="flex w-full space-x-2 overflow-x-auto bg-green-100 p-1 rounded-lg">
+            <TabsTrigger 
+              value="user-list" 
+              className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+            >User List</TabsTrigger>
+            <TabsTrigger 
+              value="add-user" 
+              className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+            >Add User</TabsTrigger>
+          </TabsList>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="flex w-full space-x-2 overflow-x-auto bg-green-100 p-1 rounded-lg">
-          <TabsTrigger 
-            value="user-list" 
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >User List</TabsTrigger>
-          <TabsTrigger 
-            value="add-user" 
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Add User</TabsTrigger>
-        </TabsList>
+          <TabsContent value="user-list">
+            <UserList onError={(error: string | null) => handleError(error ?? '')} />
+          </TabsContent>
 
-        <TabsContent value="user-list">
-          <UserList onError={(error: string | null) => handleError(error ?? '')} />
-        </TabsContent>
-
-        <TabsContent value="add-user">
-          <AddUserForm
-            onSuccess={(userName: string) => handleSuccess(`User ${userName} added successfully`)}
-            onError={(error: string) => handleError(error)}
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="add-user">
+            <AddUserForm
+              onSuccess={(userName: string) => handleSuccess(`User ${userName} added successfully`)}
+              onError={(error: string) => handleError(error)}
+            />
+          </TabsContent>
+        </Tabs>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 }

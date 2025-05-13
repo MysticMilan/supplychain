@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
+import Link from "next/link";
 
 interface TransparentNavbarProps {
   onRegisterClick: () => void;
@@ -11,16 +11,42 @@ interface TransparentNavbarProps {
 
 export default function TransparentNavbar({ onRegisterClick }: TransparentNavbarProps) {
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 50;
       setScrolled(isScrolled);
+
+      // Check which section is in view
+      const sections = document.querySelectorAll('section[id], footer[id]');
+      let currentSection = '';
+
+      sections.forEach(section => {
+        const sectionTop = (section as HTMLElement).offsetTop - 100;
+        const sectionHeight = (section as HTMLElement).offsetHeight;
+        const scrollPosition = window.scrollY + window.innerHeight / 2;
+
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+          currentSection = section.id;
+        }
+      });
+
+      if (currentSection !== activeSection) {
+        setActiveSection(currentSection);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [activeSection]);
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <nav className="fixed top-0 w-full z-50">
@@ -43,12 +69,30 @@ export default function TransparentNavbar({ onRegisterClick }: TransparentNavbar
             />
           </Link>
           <div className={`flex-1 flex items-center justify-center gap-6 ${scrolled ? "text-gray-800" : "text-white"}`}>
-            <Link href="/home" className={`${scrolled ? "hover:text-green-600" : "hover:text-green-400"}`}>Home</Link>
-            <Link href="/about" className={`${scrolled ? "hover:text-green-600" : "hover:text-green-400"}`}>About</Link>
-            <Link href="/features" className={`${scrolled ? "hover:text-green-600" : "hover:text-green-400"}`}>Features</Link>
-            <Link href="/contact" className={`${scrolled ? "hover:text-green-600" : "hover:text-green-400"}`}>Contact</Link>
-            <Link href="/verify" className={`${scrolled ? "hover:text-green-600" : "hover:text-green-400"}`}>Track Tea</Link>
-
+            <button 
+              onClick={() => scrollToSection('home')} 
+              className={`${activeSection === 'home' ? 'text-green-500 font-semibold' : ''} ${scrolled ? "hover:text-green-600" : "hover:text-green-400"}`}
+            >
+              Home
+            </button>
+            <button 
+              onClick={() => scrollToSection('about')} 
+              className={`${activeSection === 'about' ? 'text-green-500 font-semibold' : ''} ${scrolled ? "hover:text-green-600" : "hover:text-green-400"}`}
+            >
+              About
+            </button>
+            <button 
+              onClick={() => scrollToSection('features')} 
+              className={`${activeSection === 'features' ? 'text-green-500 font-semibold' : ''} ${scrolled ? "hover:text-green-600" : "hover:text-green-400"}`}
+            >
+              Features
+            </button>
+            <button 
+              onClick={() => scrollToSection('contact')} 
+              className={`${activeSection === 'contact' ? 'text-green-500 font-semibold' : ''} ${scrolled ? "hover:text-green-600" : "hover:text-green-400"}`}
+            >
+              Contact
+            </button>
           </div>
           <div className="flex items-center gap-4">
             <Button 

@@ -16,6 +16,7 @@ import ProductMarkAsSold from "../shared/components/ProductMarkAsSold";
 import { useAccountContractInfo } from "../hooks/domin/useAccountContractInfo";
 import { useMetamask } from "../hooks/blockchain/useMetamask";
 import Navbar from "@/components/Navbar";
+import Footer from '../shared/Footer';
 import { Role, Stage } from "../types/enums";
 
 export default function DistributorDashboard() {
@@ -70,60 +71,63 @@ export default function DistributorDashboard() {
   }
 
   return (
-    <div className="container mx-auto p-6 bg-white min-h-screen">
-      <Navbar />
-      <h1 className="text-3xl font-bold mb-6 text-green-800">Distributor Dashboard</h1>
+    <div className="min-h-screen flex flex-col">
+      <main className="flex-grow">
+        <div className="container mx-auto p-6 bg-white">
+          <Navbar />
+          <h1 className="text-3xl font-bold mb-6 text-green-800">Distributor Dashboard</h1>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="flex w-full space-x-2 overflow-x-auto bg-green-100 p-1 rounded-lg">
-          <TabsTrigger
-            value="list"
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Product List</TabsTrigger>
-          <TabsTrigger
-            value="product-checkin"
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Product Check-In</TabsTrigger>
-          <TabsTrigger
-            value="mark-as-lost"
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Mark as Lost</TabsTrigger>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="flex w-full space-x-2 overflow-x-auto bg-green-100 p-1 rounded-lg">
+            <TabsTrigger
+              value="list"
+              className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+            >Product List</TabsTrigger>
+            <TabsTrigger
+              value="product-checkin"
+              className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+            >Product Check-In</TabsTrigger>
+            <TabsTrigger
+              value="mark-as-lost"
+              className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+            >Mark as Lost</TabsTrigger>
+            <TabsTrigger
+              value="product-sold"
+              className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
+            >Mark as Sold</TabsTrigger>
+          </TabsList>
 
-          <TabsTrigger
-            value="product-sold"
-            className="data-[state=active]:bg-green-600 data-[state=active]:text-white"
-          >Mark as Sold</TabsTrigger>
+          <TabsContent value="list">
+            <ProductList onError={(error: string) => handleError(error)} />
+          </TabsContent>
 
-        </TabsList>
+          <TabsContent value="product-checkin">
+            <ProductCheckIn
+              onSuccess={() => handleSuccess("Product checked in successfully")}
+              onError={(error: string) => handleError(error)}
+              productStage={Stage.Distributor}
+            />
+          </TabsContent>
 
-        <TabsContent value="list">
-          <ProductList onError={(error: string) => handleError(error)} />
-        </TabsContent>
+          <TabsContent value="mark-as-lost">
+            <ProductMarkAsLost
+              onSuccess={() =>
+                handleSuccess("Product marked as lost successfully")
+              }
+              onError={(error) => handleError(error)}
+            />
+          </TabsContent>
 
-        <TabsContent value="product-checkin">
-          <ProductCheckIn
-            onSuccess={() => handleSuccess("Product checked in successfully")}
-            onError={(error: string) => handleError(error)}
-            productStage={Stage.Distributor}
-          />
-        </TabsContent>
-
-        <TabsContent value="mark-as-lost">
-          <ProductMarkAsLost
-            onSuccess={() =>
-              handleSuccess("Product marked as lost successfully")
-            }
-            onError={(error) => handleError(error)}
-          />
-        </TabsContent>
-
-        <TabsContent value="product-sold">
-          <ProductMarkAsSold
-            onSuccess={() => handleSuccess("Product marked as sold successfully")}
-            onError={(error: string) => handleError(error)}
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="product-sold">
+            <ProductMarkAsSold
+              onSuccess={() => handleSuccess("Product marked as sold successfully")}
+              onError={(error: string) => handleError(error)}
+            />
+          </TabsContent>
+        </Tabs>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 }
