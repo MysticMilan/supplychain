@@ -84,10 +84,11 @@ contract SupplyChain {
         owner = msg.sender;
     }
 
-    function _isValidRoleForStage(
-        address user,
-        Stage _stage
-    ) internal view returns (bool) {
+    function _isValidRoleForStage(address user, Stage _stage)
+        internal
+        view
+        returns (bool)
+    {
         Role userRole = users[user].role;
         if (_stage == Stage.Manufactured && userRole == Role.Manufacturer)
             return true;
@@ -97,7 +98,6 @@ contract SupplyChain {
             return true;
         if (_stage == Stage.Distributor && userRole == Role.Distributor)
             return true;
-        if (_stage == Stage.Retailer && userRole == Role.Retailer) return true;
         return false;
     }
 
@@ -141,10 +141,10 @@ contract SupplyChain {
         emit UserAdded(_wallet, _name, _role, UserStatus.Active);
     }
 
-    function updateUserStatus(
-        address _wallet,
-        UserStatus newStatus
-    ) public onlyOwner {
+    function updateUserStatus(address _wallet, UserStatus newStatus)
+        public
+        onlyOwner
+    {
         require(_wallet != address(0), "Invalid address.");
         UserStatus currentStatus = users[_wallet].status;
         require(currentStatus != newStatus, "Already in desired state.");
@@ -168,10 +168,10 @@ contract SupplyChain {
         emit UserStatusUpdated(_wallet, currentStatus, newStatus);
     }
 
-    function createBatch(
-        string memory _name,
-        string memory _description
-    ) public userValidationCheck {
+    function createBatch(string memory _name, string memory _description)
+        public
+        userValidationCheck
+    {
         require(users[msg.sender].role == Role.Manufacturer, "Unauthorized.");
         require(bytes(_name).length >= 2, "Name Too short.");
 
@@ -241,6 +241,10 @@ contract SupplyChain {
         string memory _remark
     ) public userValidationCheck {
         require(
+            _productId > 0 && _productId <= productCount,
+            "Invalid Product Id"
+        );
+        require(
             _newStage >= products[_productId].stage,
             "Invalid stage transition."
         );
@@ -276,6 +280,10 @@ contract SupplyChain {
         Stage _newStage,
         string memory _remark
     ) public invalidProductCheck(_productId) userValidationCheck {
+        require(
+            _productId > 0 && _productId <= productCount,
+            "Invalid Product Id"
+        );
         require(
             products[_productId].ownerWallet == msg.sender,
             "Unauthorized."
@@ -326,9 +334,7 @@ contract SupplyChain {
     //     return productlist;
     // }
 
-    function getProductDetails(
-        uint256 _productId
-    )
+    function getProductDetails(uint256 _productId)
         public
         view
         returns (
